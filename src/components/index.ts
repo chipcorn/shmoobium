@@ -4,4 +4,12 @@ export type {
   NavbarItem, 
   NavbarIcon, 
   NavbarStyle
-} from './Navbar'; 
+} from './Navbar';
+
+export { Button } from './Button';
+export type { 
+  ButtonProps, 
+  ButtonVariant, 
+  ButtonSize, 
+  ButtonShape 
+} from './Button'; 

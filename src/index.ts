@@ -1,5 +1,6 @@
 // Main exports
 export { Navbar, createIcon } from './components/Navbar/Navbar';
+export { Button } from './components/Button/Button';
 export { cn } from './utils/classNames';
 
 // Type exports
@@ -9,5 +10,13 @@ export type {
   NavbarIcon, 
   NavbarPosition, 
   NavbarStyle, 
-  NavbarAlignment 
-} from './components/Navbar/types'; 
+  NavbarAlignment,
+  SlideoverStyle
+} from './components/Navbar/types';
+
+export type { 
+  ButtonProps, 
+  ButtonVariant, 
+  ButtonSize, 
+  ButtonShape 
+} from './components/Button/types'; 
