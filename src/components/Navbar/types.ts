@@ -5,6 +5,7 @@ export interface NavbarItem {
   icon?: React.ReactNode;
   disabled?: boolean;
   dropdown?: NavbarItem[];
+  hideOnMobile?: boolean;
 }
 
 export interface NavbarIcon {

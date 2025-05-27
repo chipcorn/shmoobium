@@ -277,6 +277,11 @@ export const Navbar: React.FC<NavbarProps> = ({
     return (
       <div className={cn('navbar__items', `navbar__items--${effectiveAlignment}`)}>
         {items.map((item, index) => {
+          // Skip items that should be hidden on mobile
+          if (isMobile && item.hideOnMobile) {
+            return null;
+          }
+
           const hasDropdown = item.dropdown && item.dropdown.length > 0;
           
           if (hasDropdown) {
@@ -461,6 +466,10 @@ const MobileMenuPortal: React.FC<{
     <div ref={menuRef} className={cn('navbar__mobile-menu', menuClass, positionClass, visibleClass)}>
       <div className="navbar__mobile-items">
         {items.map((item, index) => {
+          // Skip items that should be hidden on mobile
+          if (item.hideOnMobile) {
+            return null;
+          }
           const hasDropdown = item.dropdown && item.dropdown.length > 0;
           
           if (hasDropdown) {
