@@ -95,7 +95,10 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
         await audioContextRef.current.resume();
       }
       
-      const soundUrls = ['./node_modules/shmoobium/dist/assets/StickerPeel.mp3', './node_modules/shmoobium/dist/assets/StickerPlace.mp3'];
+      const soundUrls = [
+        'https://unpkg.com/shmoobium@latest/dist/assets/StickerPeel.mp3',
+        'https://unpkg.com/shmoobium@latest/dist/assets/StickerPlace.mp3'
+      ];
       
       for (const url of soundUrls) {
         if (!audioBuffersRef.current.has(url)) {
@@ -173,7 +176,7 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       setPlacedStickers(prev => [...prev, newSticker]);
       setNextZIndex(prev => prev + 1);
       
-      playSound('./node_modules/shmoobium/dist/assets/StickerPeel.mp3');
+      playSound('https://unpkg.com/shmoobium@latest/dist/assets/StickerPeel.mp3');
     }
 
     onStickerToggle?.(stickerId, !isCurrentlyEnabled);
@@ -243,7 +246,7 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       })
     );
     
-    playSound('./node_modules/shmoobium/dist/assets/StickerPeel.mp3');
+    playSound('https://unpkg.com/shmoobium@latest/dist/assets/StickerPeel.mp3');
   }, [nextZIndex, playSound, initAudio, cycleStickerSize]);
 
   useEffect(() => {
@@ -264,7 +267,7 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
 
     const handleMouseUp = () => {
       if (draggedSticker) {
-        playSound('./node_modules/shmoobium/dist/assets/StickerPlace.mp3');
+        playSound('https://unpkg.com/shmoobium@latest/dist/assets/StickerPlace.mp3');
         onStickerMove?.(draggedSticker.id, draggedSticker.position);
         
         setPlacedStickers(prev =>
@@ -315,7 +318,7 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       })
     );
     
-    playSound('./node_modules/shmoobium/dist/assets/StickerPeel.mp3');
+    playSound('https://unpkg.com/shmoobium@latest/dist/assets/StickerPeel.mp3');
   }, [playSound, cycleStickerSize]);
 
   useEffect(() => {
@@ -338,7 +341,7 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
 
     const handleTouchEnd = () => {
       if (draggedSticker) {
-        playSound('./node_modules/shmoobium/dist/assets/StickerPlace.mp3');
+        playSound('https://unpkg.com/shmoobium@latest/dist/assets/StickerPlace.mp3');
         onStickerMove?.(draggedSticker.id, draggedSticker.position);
         
         setPlacedStickers(prev =>
