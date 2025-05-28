@@ -13,7 +13,9 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "prepublishOnly": "npm run build"
+    "update-version": "echo \"export const VERSION = '$(node -p \"require('./package.json').version\")';\"> src/version.ts",
+    "version": "npm run update-version && git add src/version.ts",
+    "prepublishOnly": "npm run update-version && npm run build"
   },
   "keywords": [
     "shmooblesworld",

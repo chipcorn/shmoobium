@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../utils/classNames';
 import { NavbarProps, NavbarItem } from './types';
+import { VERSION } from '../../version';
 import './Navbar.css';
-
-const VERSION = '1.0.5';
 
 export const createIcon = (src: string, alt: string, size: number = 24): React.ReactElement => {
   return React.createElement('img', {
@@ -42,7 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const iconRef = React.useRef<HTMLDivElement>(null);
 
   const validPositions = ['top', 'bottom', 'left', 'right'];
-  const safePosition = position && validPositions.includes(position) ? position : 'top';
+  const safePosition = position && validPositions.indexOf(position) !== -1 ? position : 'top';
 
   const checkIfItemsFit = React.useCallback(() => {
     if (!navbarRef.current || !itemsRef.current || !iconRef.current) return true;
@@ -96,7 +95,14 @@ export const Navbar: React.FC<NavbarProps> = ({
     const bodyClass = bodyClassMap[effectivePosition];
     document.body.classList.add(bodyClass);
 
-    Object.values(bodyClassMap).forEach(cls => {
+    const bodyClassValues = [
+      bodyClassMap.top,
+      bodyClassMap.bottom,
+      bodyClassMap.left,
+      bodyClassMap.right
+    ];
+    
+    bodyClassValues.forEach((cls: string) => {
       if (cls !== bodyClass) {
         document.body.classList.remove(cls);
       }
