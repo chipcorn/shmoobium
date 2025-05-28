@@ -123,7 +123,8 @@ body.navbar-floating-right {
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  height: auto;
+  height: 80px;
+  min-height: 80px;
   flex-wrap: nowrap;
 }
 
@@ -182,6 +183,7 @@ body.navbar-floating-right {
 .navbar__icon-link img {
   height: 48px;
   width: auto;
+  max-width: none;
 }
 
 .navbar__logo-text {
@@ -440,36 +442,36 @@ body.navbar-floating-right {
   position: relative;
 }
 
+.navbar__mobile-toggle--visible {
+  display: flex;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 40px;
+  width: 40px;
+}
+
 .navbar__mobile-toggle:hover {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Dynamic mobile mode styles */
+.navbar--mobile .navbar__items {
+  display: none !important;
 }
 
 /* Show mobile toggle on mobile */
 @media (max-width: 768px) {
   .navbar__container {
     padding: 0 16px;
-    height: auto;
-    min-height: auto;
+    height: 80px;
+    min-height: 80px;
     align-items: center;
     position: relative;
   }
   
-  .navbar__items {
-    display: none !important;
-  }
-  
-  .navbar__mobile-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 40px;
-    width: 40px;
-    margin: 0;
-  }
+
   
   /* Force left/right navbars to become top navbars on mobile */
   .navbar--left,
@@ -498,9 +500,9 @@ body.navbar-floating-right {
   .navbar--left .navbar__container,
   .navbar--right .navbar__container {
     flex-direction: row;
-    height: auto;
+    height: 80px;
     padding: 0 16px;
-    min-height: auto;
+    min-height: 80px;
     align-items: center;
     justify-content: space-between;
     position: relative;
@@ -511,27 +513,27 @@ body.navbar-floating-right {
   body.navbar-right {
     padding-left: 0;
     padding-right: 0;
-    padding-top: 48px;
+    padding-top: 80px;
   }
   
   body.navbar-top {
-    padding-top: 48px;
+    padding-top: 80px;
   }
 
   /* Floating navbar adjustments for mobile */
   body.navbar-floating-top {
-    padding-top: 64px;
+    padding-top: 96px;
   }
 
   body.navbar-floating-bottom {
-    padding-bottom: 64px;
+    padding-bottom: 96px;
   }
 
   body.navbar-floating-left,
   body.navbar-floating-right {
     padding-left: 0;
     padding-right: 0;
-    padding-top: 64px;
+    padding-top: 96px;
   }
 }
 

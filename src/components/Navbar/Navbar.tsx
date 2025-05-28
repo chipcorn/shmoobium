@@ -34,7 +34,55 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [currentUrl, setCurrentUrl] = useState(window.location.href);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState<number | null>(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobile, setIsMobile] = useState(false);
+  const navbarRef = React.useRef<HTMLElement>(null);
+  const itemsRef = React.useRef<HTMLDivElement>(null);
+  const iconRef = React.useRef<HTMLDivElement>(null);
+
+  // Simple function to check if items fit
+  const checkIfItemsFit = React.useCallback(() => {
+    if (!navbarRef.current || !itemsRef.current || !iconRef.current) return true;
+    if (position === 'left' || position === 'right') return true;
+    
+    const navbarWidth = navbarRef.current.offsetWidth;
+    const iconWidth = iconRef.current.offsetWidth;
+    
+    // Estimate total width of all items
+    let estimatedWidth = 0;
+    
+    items.forEach((item) => {
+      // Estimate width based on text length and typical navbar item styling
+      const textLength = item.label.length;
+      const hasIcon = !!item.icon;
+      const hasDropdown = item.dropdown && item.dropdown.length > 0;
+      
+      // Base width: padding (40px) + text (8px per character) + icon space (32px if icon) + dropdown arrow (20px if dropdown)
+      let itemWidth = 40; // padding
+      itemWidth += textLength * 8; // approximate character width
+      if (hasIcon) itemWidth += 32; // icon space
+      if (hasDropdown) itemWidth += 20; // dropdown arrow
+      
+      estimatedWidth += itemWidth;
+    });
+    
+    // Add gaps between items (12px each)
+    estimatedWidth += (items.length - 1) * 12;
+    
+    // Allow 50px overflow before switching to mobile (subtract from required space)
+    const availableSpace = navbarWidth - iconWidth - 70 + 50; // 40px padding + 30px mobile toggle space + 50px overflow allowance
+    const itemsFit = estimatedWidth <= availableSpace;
+    
+    console.log('🔍 Navbar fit check:', {
+      navbarWidth,
+      iconWidth,
+      estimatedWidth,
+      availableSpace,
+      itemsFit,
+      currentMode: isMobile ? 'mobile' : 'desktop'
+    });
+    
+    return itemsFit;
+  }, [position, items, isMobile]);
 
   useEffect(() => {
     // Determine effective position (left/right become top on mobile)
@@ -60,13 +108,17 @@ export const Navbar: React.FC<NavbarProps> = ({
     // Update current URL state to trigger re-renders
     setCurrentUrl(window.location.href);
 
-    // Mobile detection
+    // Simple resize handler
     const handleResize = () => {
-      const newIsMobile = window.innerWidth <= 768;
-      setIsMobile(newIsMobile);
-      if (!newIsMobile) {
-        setMobileMenuOpen(false);
-        setMobileDropdownOpen(null);
+      const itemsFit = checkIfItemsFit();
+      const shouldBeMobile = !itemsFit;
+      
+      if (shouldBeMobile !== isMobile) {
+        setIsMobile(shouldBeMobile);
+        if (!shouldBeMobile) {
+          setMobileMenuOpen(false);
+          setMobileDropdownOpen(null);
+        }
       }
     };
 
@@ -89,13 +141,16 @@ export const Navbar: React.FC<NavbarProps> = ({
     document.addEventListener('click', handleClickOutside);
     document.addEventListener('scroll', handleScroll);
 
+    // Initial check
+    setTimeout(handleResize, 0);
+
     return () => {
       document.body.classList.remove(bodyClass);
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('scroll', handleScroll);
     };
-  }, [position, style, isMobile]);
+  }, [position, style, checkIfItemsFit]);
 
   // Helper function to check if a navigation item is active
   const isItemActive = (item: NavbarItem): boolean => {
@@ -275,7 +330,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     const effectiveAlignment = getEffectiveAlignment();
     
     return (
-      <div className={cn('navbar__items', `navbar__items--${effectiveAlignment}`)}>
+      <>
         {items.map((item, index) => {
           // Skip items that should be hidden on mobile
           if (isMobile && item.hideOnMobile) {
@@ -329,7 +384,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </ItemComponent>
           );
         })}
-      </div>
+      </>
     );
   };
 
@@ -354,11 +409,12 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   // Render mobile menu button
   const renderMobileToggle = () => {
-    if (!isMobile) return null;
-
     return (
       <button
-        className="navbar__mobile-toggle"
+        className={cn(
+          'navbar__mobile-toggle',
+          isMobile && 'navbar__mobile-toggle--visible'
+        )}
         onClick={toggleMobileMenu}
         type="button"
         aria-label="Toggle mobile menu"
@@ -375,17 +431,23 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       <nav 
+        ref={navbarRef}
         className={cn(
           'navbar',
           `navbar--${position}`,
           `navbar--${style}`,
+          isMobile && 'navbar--mobile',
           className
         )}
         style={customStyles}
       >
         <div className="navbar__container">
-          {renderIcon()}
-          {renderItems()}
+          <div ref={iconRef}>
+            {renderIcon()}
+          </div>
+          <div ref={itemsRef} className={cn('navbar__items', `navbar__items--${getEffectiveAlignment()}`)}>
+            {renderItems()}
+          </div>
         </div>
         {renderMobileToggle()}
       </nav>
@@ -554,4 +616,4 @@ const MobileMenuPortal: React.FC<{
 
   // Render to document.body to completely avoid navbar positioning
   return createPortal(menuContent, document.body);
-}; 
+};
