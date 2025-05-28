@@ -1,0 +1,35 @@
+export interface Sticker {
+  id: string;
+  name: string;
+  image: string;
+  enabled: boolean;
+  position?: {
+    x: number;
+    y: number;
+  };
+  zIndex?: number;
+}
+
+export interface StickerBoxProps {
+  stickers: Sticker[];
+  buttonText?: string;
+  buttonIcon?: React.ReactNode;
+  maxStickers?: number;
+  spawnRadius?: number;
+  enableSounds?: boolean;
+  pickupSound?: string;
+  placeSound?: string;
+  className?: string;
+  buttonClassName?: string;
+  onStickerToggle?: (stickerId: string, enabled: boolean) => void;
+  onStickerMove?: (stickerId: string, position: { x: number; y: number }) => void;
+}
+
+export interface PlacedSticker extends Sticker {
+  position: {
+    x: number;
+    y: number;
+  };
+  zIndex: number;
+  isDragging?: boolean;
+} 

@@ -4,6 +4,8 @@ import { cn } from '../../utils/classNames';
 import { NavbarProps, NavbarItem } from './types';
 import './Navbar.css';
 
+const VERSION = '1.0.5';
+
 // Helper function for creating image icons
 export const createIcon = (src: string, alt: string, size: number = 24): React.ReactElement => {
   return React.createElement('img', {
@@ -25,6 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   font,
   fontColor,
   backgroundColor,
+  displayShmoobiumVersion = false,
   className,
   itemClassName,
   iconClassName,
@@ -392,7 +395,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const customStyles: React.CSSProperties = {
     ...(font && { fontFamily: font }),
     ...(fontColor && { color: fontColor }),
-    ...(backgroundColor && { backgroundColor }),
+    ...(backgroundColor && { backgroundColor: backgroundColor }),
   };
 
   // Mobile menu toggle
@@ -428,6 +431,52 @@ export const Navbar: React.FC<NavbarProps> = ({
     );
   };
 
+  // Render version display
+  const renderVersionDisplay = () => {
+    if (!displayShmoobiumVersion) {
+      return null;
+    }
+
+    // Position based on navbar position
+    const getVersionPosition = () => {
+      switch (position) {
+        case 'top':
+          return { bottom: '8px', right: '8px' };
+        case 'bottom':
+          return { top: '8px', right: '8px' };
+        case 'left':
+          return { bottom: '8px', right: '8px' };
+        case 'right':
+          return { bottom: '8px', left: '8px' };
+        default:
+          return { bottom: '8px', right: '8px' };
+      }
+    };
+
+    const versionContent = (
+      <div 
+        className="navbar__version-display"
+        style={{
+          position: 'fixed',
+          ...getVersionPosition(),
+          background: 'rgba(0, 0, 0, 0.7)',
+          color: 'white',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          fontSize: '11px',
+          fontWeight: '500',
+          zIndex: 99999,
+          pointerEvents: 'none',
+          userSelect: 'none',
+        }}
+      >
+        Shmoobium v{VERSION}
+      </div>
+    );
+
+    return createPortal(versionContent, document.body);
+  };
+
   return (
     <>
       <nav 
@@ -461,7 +510,10 @@ export const Navbar: React.FC<NavbarProps> = ({
         mobileDropdownOpen={mobileDropdownOpen}
         setMobileDropdownOpen={setMobileDropdownOpen}
         isItemActive={isItemActive}
+        customStyles={customStyles}
       />
+      
+      {renderVersionDisplay()}
     </>
   );
 };
@@ -476,7 +528,8 @@ const MobileMenuPortal: React.FC<{
   mobileDropdownOpen: number | null;
   setMobileDropdownOpen: (index: number | null) => void;
   isItemActive: (item: NavbarItem) => boolean;
-}> = ({ isOpen, onClose, items, slideover, position, mobileDropdownOpen, setMobileDropdownOpen, isItemActive }) => {
+  customStyles: React.CSSProperties;
+}> = ({ isOpen, onClose, items, slideover, position, mobileDropdownOpen, setMobileDropdownOpen, isItemActive, customStyles }) => {
   const menuRef = React.useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = React.useState(false);
   const [shouldRender, setShouldRender] = React.useState(false);
@@ -525,7 +578,7 @@ const MobileMenuPortal: React.FC<{
   const visibleClass = isVisible ? 'navbar__mobile-menu--visible' : '';
 
   const menuContent = (
-    <div ref={menuRef} className={cn('navbar__mobile-menu', menuClass, positionClass, visibleClass)}>
+    <div ref={menuRef} className={cn('navbar__mobile-menu', menuClass, positionClass, visibleClass)} style={customStyles}>
       <div className="navbar__mobile-items">
         {items.map((item, index) => {
           // Skip items that should be hidden on mobile

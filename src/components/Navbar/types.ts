@@ -33,6 +33,7 @@ export interface NavbarProps {
   font?: string;
   fontColor?: string;
   backgroundColor?: string;
+  displayShmoobiumVersion?: boolean;
   className?: string;
   itemClassName?: string;
   iconClassName?: string;
