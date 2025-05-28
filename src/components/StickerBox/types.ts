@@ -12,15 +12,12 @@ export interface Sticker {
 
 export interface StickerBoxProps {
   stickers: Sticker[];
-  buttonText?: string;
-  buttonIcon?: React.ReactNode;
   maxStickers?: number;
   spawnRadius?: number;
   enableSounds?: boolean;
   pickupSound?: string;
   placeSound?: string;
   className?: string;
-  buttonClassName?: string;
   onStickerToggle?: (stickerId: string, enabled: boolean) => void;
   onStickerMove?: (stickerId: string, position: { x: number; y: number }) => void;
 }

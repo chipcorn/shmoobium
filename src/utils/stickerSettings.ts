@@ -22,7 +22,6 @@ export const loadStickerSettings = (): StickerSettings => {
   let settings = { ...defaultStickerSettings };
 
   try {
-    // Check if sticker settings are available in global scope
     const globalStickerSettings = (window as any).stickerSettings;
     if (globalStickerSettings) {
       settings = { ...defaultStickerSettings, ...globalStickerSettings };

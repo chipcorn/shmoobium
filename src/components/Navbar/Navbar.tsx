@@ -6,7 +6,6 @@ import './Navbar.css';
 
 const VERSION = '1.0.5';
 
-// Helper function for creating image icons
 export const createIcon = (src: string, alt: string, size: number = 24): React.ReactElement => {
   return React.createElement('img', {
     src: src,
@@ -42,7 +41,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   const itemsRef = React.useRef<HTMLDivElement>(null);
   const iconRef = React.useRef<HTMLDivElement>(null);
 
-  // Simple function to check if items fit
   const checkIfItemsFit = React.useCallback(() => {
     if (!navbarRef.current || !itemsRef.current || !iconRef.current) return true;
     if (position === 'left' || position === 'right') return true;
@@ -50,28 +48,23 @@ export const Navbar: React.FC<NavbarProps> = ({
     const navbarWidth = navbarRef.current.offsetWidth;
     const iconWidth = iconRef.current.offsetWidth;
     
-    // Estimate total width of all items
     let estimatedWidth = 0;
     
     items.forEach((item) => {
-      // Estimate width based on text length and typical navbar item styling
       const textLength = item.label.length;
       const hasIcon = !!item.icon;
       const hasDropdown = item.dropdown && item.dropdown.length > 0;
       
-      // Base width: padding (40px) + text (8px per character) + icon space (32px if icon) + dropdown arrow (20px if dropdown)
-      let itemWidth = 40; // padding
-      itemWidth += textLength * 8; // approximate character width
-      if (hasIcon) itemWidth += 32; // icon space
-      if (hasDropdown) itemWidth += 20; // dropdown arrow
+      let itemWidth = 40;
+      itemWidth += textLength * 8;
+      if (hasIcon) itemWidth += 32;
+      if (hasDropdown) itemWidth += 20;
       
       estimatedWidth += itemWidth;
     });
     
-    // Add gaps between items (12px each)
     estimatedWidth += (items.length - 1) * 12;
     
-    // Allow 50px overflow before switching to mobile (subtract from required space)
     const availableSpace = navbarWidth - iconWidth - 70 + 50; // 40px padding + 30px mobile toggle space + 50px overflow allowance
     const itemsFit = estimatedWidth <= availableSpace;
     
@@ -88,7 +81,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, [position, items, isMobile]);
 
   useEffect(() => {
-    // Determine effective position (left/right become top on mobile)
     const effectivePosition = isMobile && (position === 'left' || position === 'right') ? 'top' : position;
     
     const bodyClassMap = {
@@ -101,17 +93,14 @@ export const Navbar: React.FC<NavbarProps> = ({
     const bodyClass = bodyClassMap[effectivePosition];
     document.body.classList.add(bodyClass);
 
-    // Clean up other navbar classes
     Object.values(bodyClassMap).forEach(cls => {
       if (cls !== bodyClass) {
         document.body.classList.remove(cls);
       }
     });
 
-    // Update current URL state to trigger re-renders
     setCurrentUrl(window.location.href);
 
-    // Simple resize handler
     const handleResize = () => {
       const itemsFit = checkIfItemsFit();
       const shouldBeMobile = !itemsFit;
@@ -125,7 +114,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       }
     };
 
-    // Close mobile menu on outside click
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
       if (!target.closest('.navbar__mobile-menu') && !target.closest('.navbar__mobile-toggle')) {
@@ -134,7 +122,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       }
     };
 
-    // Close mobile menu on scroll
     const handleScroll = () => {
       setMobileMenuOpen(false);
       setMobileDropdownOpen(null);
@@ -143,8 +130,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     window.addEventListener('resize', handleResize);
     document.addEventListener('click', handleClickOutside);
     document.addEventListener('scroll', handleScroll);
-
-    // Initial check
+  
     setTimeout(handleResize, 0);
 
     return () => {
@@ -155,7 +141,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     };
   }, [position, style, checkIfItemsFit]);
 
-  // Helper function to check if a navigation item is active
   const isItemActive = (item: NavbarItem): boolean => {
     if (!item.href) return false;
     
@@ -169,13 +154,11 @@ export const Navbar: React.FC<NavbarProps> = ({
     console.log('   Current path:', currentPath);
     console.log('   Current href:', currentHref);
     
-    // Simple filename match
     if (item.href === currentPage) {
       console.log('✅ ACTIVE MATCH found for:', item.label);
       return true;
     }
     
-    // Handle index.html as home page
     if (item.href === 'index.html' && (currentPage === 'index.html' || currentPage === '')) {
       console.log('✅ ACTIVE MATCH (index) found for:', item.label);
       return true;
@@ -185,41 +168,34 @@ export const Navbar: React.FC<NavbarProps> = ({
     return false;
   };
 
-  // Handle item click
   const handleItemClick = (item: NavbarItem, event: React.MouseEvent) => {
     if (item.disabled) {
       event.preventDefault();
       return;
     }
 
-    // If item has dropdown, toggle it
     if (item.dropdown) {
       event.preventDefault();
       return;
     }
 
-    // Call custom onClick if provided
     if (item.onClick) {
       event.preventDefault();
       item.onClick();
     }
 
-    // Call parent callback
     onItemClick?.(item);
   };
 
-  // Handle dropdown toggle
   const handleDropdownToggle = (index: number, event: React.MouseEvent) => {
     event.preventDefault();
     setOpenDropdown(openDropdown === index ? null : index);
   };
 
-  // Handle icon error - fallback to default
   const handleIconError = (event: React.SyntheticEvent<HTMLImageElement>) => {
     event.currentTarget.src = '/src/assets/shmoobium.webp';
   };
 
-  // Render icon with logo text
   const renderIcon = () => {
     let iconElement;
     
@@ -244,7 +220,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       </>
     );
 
-    // If icon has onClick, use button
     if (icon?.onClick) {
       return (
         <button
@@ -257,7 +232,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       );
     }
 
-    // If logoHref or icon.href, use link
     const href = icon?.href || logoHref;
     if (href) {
       return (
@@ -270,7 +244,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       );
     }
 
-    // Default div
     return (
       <div className={cn('navbar__icon', iconClassName)}>
         {logoContent}
@@ -278,7 +251,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     );
   };
 
-  // Render dropdown menu
   const renderDropdown = (items: NavbarItem[], parentIndex: number) => {
     if (openDropdown !== parentIndex) return null;
 
@@ -300,7 +272,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
               onClick={(e) => {
                 handleItemClick(item, e);
-                setOpenDropdown(null); // Close dropdown after click
+                setOpenDropdown(null);
               }}
               {...itemProps}
             >
@@ -313,29 +285,24 @@ export const Navbar: React.FC<NavbarProps> = ({
     );
   };
 
-  // Get effective alignment based on position
   const getEffectiveAlignment = () => {
     if (position === 'left' || position === 'right') {
-      // For vertical navbars: top/left = top, bottom/right = bottom
       if (alignment === 'top' || alignment === 'left') return 'top';
       if (alignment === 'bottom' || alignment === 'right') return 'bottom';
-      return 'top'; // default
+      return 'top';
     } else {
-      // For horizontal navbars: top/left = left, bottom/right = right
       if (alignment === 'top' || alignment === 'left') return 'left';
       if (alignment === 'bottom' || alignment === 'right') return 'right';
-      return 'right'; // default
+      return 'right';
     }
   };
 
-  // Render navigation items
   const renderItems = () => {
     const effectiveAlignment = getEffectiveAlignment();
     
     return (
       <>
         {items.map((item, index) => {
-          // Skip items that should be hidden on mobile
           if (isMobile && item.hideOnMobile) {
             return null;
           }
@@ -391,26 +358,22 @@ export const Navbar: React.FC<NavbarProps> = ({
     );
   };
 
-  // Custom styles
   const customStyles: React.CSSProperties = {
     ...(font && { fontFamily: font }),
     ...(fontColor && { color: fontColor }),
     ...(backgroundColor && { backgroundColor: backgroundColor }),
   };
 
-  // Mobile menu toggle
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
-    setOpenDropdown(null); // Close any open dropdowns
+    setOpenDropdown(null);
   };
 
-  // Close mobile menu
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
     setMobileDropdownOpen(null);
   };
 
-  // Render mobile menu button
   const renderMobileToggle = () => {
     return (
       <button
@@ -431,13 +394,11 @@ export const Navbar: React.FC<NavbarProps> = ({
     );
   };
 
-  // Render version display
   const renderVersionDisplay = () => {
     if (!displayShmoobiumVersion) {
       return null;
     }
 
-    // Position based on navbar position
     const getVersionPosition = () => {
       switch (position) {
         case 'top':
@@ -518,7 +479,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   );
 };
 
-// Separate Mobile Menu Portal Component
 const MobileMenuPortal: React.FC<{
   isOpen: boolean;
   onClose: () => void;
@@ -534,22 +494,18 @@ const MobileMenuPortal: React.FC<{
   const [isVisible, setIsVisible] = React.useState(false);
   const [shouldRender, setShouldRender] = React.useState(false);
 
-  // Handle animation states
   React.useEffect(() => {
     if (isOpen) {
       setShouldRender(true);
-      // Small delay to ensure DOM is ready before triggering animation
       const timer = setTimeout(() => setIsVisible(true), 10);
       return () => clearTimeout(timer);
     } else {
       setIsVisible(false);
-      // Wait for animation to complete before removing from DOM
       const timer = setTimeout(() => setShouldRender(false), 100);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
-  // Handle click outside to close menu
   React.useEffect(() => {
     if (!isOpen) return;
 
@@ -567,11 +523,9 @@ const MobileMenuPortal: React.FC<{
 
   const menuClass = slideover === 'bubble' ? 'navbar__mobile-menu--bubble' : 'navbar__mobile-menu--default';
   
-  // For slideover menus, determine the correct side based on navbar position
-  // Left navbars should open on the right since that's where the hamburger is
   let slideoverPosition = position;
   if (position === 'left') {
-    slideoverPosition = 'right'; // Left navbar opens menu on right
+    slideoverPosition = 'right';
   }
   
   const positionClass = `navbar__mobile-menu--${slideoverPosition}`;
@@ -580,8 +534,7 @@ const MobileMenuPortal: React.FC<{
   const menuContent = (
     <div ref={menuRef} className={cn('navbar__mobile-menu', menuClass, positionClass, visibleClass)} style={customStyles}>
       <div className="navbar__mobile-items">
-        {items.map((item, index) => {
-          // Skip items that should be hidden on mobile
+        {items.map((item, index) => {         
           if (item.hideOnMobile) {
             return null;
           }
@@ -667,6 +620,5 @@ const MobileMenuPortal: React.FC<{
     </div>
   );
 
-  // Render to document.body to completely avoid navbar positioning
   return createPortal(menuContent, document.body);
 };

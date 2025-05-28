@@ -14,15 +14,12 @@ export interface StickerBoxRef {
 
 export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
   stickers,
-  buttonText = '🎨',
-  buttonIcon,
   maxStickers,
   spawnRadius,
   enableSounds,
   pickupSound = '/src/assets/StickerPeel.mp3',
   placeSound = '/src/assets/StickerPlace.mp3',
   className,
-  buttonClassName,
   onStickerToggle,
   onStickerMove,
 }, ref) => {
@@ -35,16 +32,11 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
   
   const audioContextRef = useRef<AudioContext | null>(null);
 
-  // Load settings
   const settings = getStickerSettings();
   
-  console.log('StickerBox: Loaded settings:', settings);
-  
-  // Check screen size and update state
   useEffect(() => {
     const checkScreenSize = () => {
-      const smallScreen = window.innerWidth < 768; // Consider screens smaller than 768px as "mobile"
-      console.log('StickerBox: Screen width:', window.innerWidth, 'isSmallScreen:', smallScreen);
+      const smallScreen = window.innerWidth < 768;
       setIsSmallScreen(smallScreen);
     };
 
@@ -53,23 +45,11 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
-  
-  console.log('StickerBox: isSmallScreen:', isSmallScreen, 'stickerBoxOnMobile:', settings.stickerBoxOnMobile);
-  console.log('StickerBox: Should return null?', isSmallScreen && !settings.stickerBoxOnMobile);
-  
-  if (isSmallScreen && !settings.stickerBoxOnMobile) {
-    console.log('StickerBox: Returning null due to small screen check');
-    return null;
-  }
-  
-  console.log('StickerBox: Component will render');
 
-  // Use settings as defaults if props not provided
   const finalMaxStickers = maxStickers ?? settings.maxStickers;
   const finalSpawnRadius = spawnRadius ?? settings.spawnRadius;
   const finalEnableSounds = enableSounds ?? settings.enableSounds;
 
-  // Expose methods to parent component
   useImperativeHandle(ref, () => ({
     openPopup: () => {
       initAudio();
@@ -78,7 +58,6 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     closePopup: () => setIsOpen(false),
   }));
 
-  // Load stickers from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -86,7 +65,6 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
         const savedStickers = JSON.parse(saved);
         setPlacedStickers(savedStickers);
         
-        // Update nextZIndex based on saved stickers
         const maxZ = Math.max(...savedStickers.map((s: PlacedSticker) => s.zIndex), 1000);
         setNextZIndex(maxZ + 1);
       } catch (error) {
@@ -95,14 +73,12 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     }
   }, []);
 
-  // Save stickers to localStorage whenever they change
   useEffect(() => {
     if (placedStickers.length > 0) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(placedStickers));
     }
   }, [placedStickers]);
 
-  // Initialize audio context
   const initAudio = useCallback(() => {
     if (!finalEnableSounds || audioContextRef.current) return;
     
@@ -113,7 +89,6 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     }
   }, [finalEnableSounds]);
 
-  // Play sound effect
   const playSound = useCallback(async (soundPath: string) => {
     if (!finalEnableSounds) return;
     
@@ -126,7 +101,6 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     }
   }, [finalEnableSounds]);
 
-  // Toggle sticker enabled state
   const toggleSticker = useCallback((stickerId: string) => {
     const sticker = stickers.find(s => s.id === stickerId);
     if (!sticker) return;
@@ -134,22 +108,19 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     const isCurrentlyEnabled = placedStickers.some(p => p.id === stickerId);
     
     if (isCurrentlyEnabled) {
-      // Remove sticker
       setPlacedStickers(prev => prev.filter(p => p.id !== stickerId));
     } else {
-      // Add sticker
       if (placedStickers.length >= finalMaxStickers) {
         alert(`Maximum ${finalMaxStickers} stickers allowed!`);
         return;
       }
 
-      // Generate random position around center of screen
       const centerX = window.innerWidth / 2;
       const centerY = window.innerHeight / 2;
       
       const angle = Math.random() * Math.PI * 2;
       const distance = Math.random() * finalSpawnRadius + 50;
-      const x = centerX + Math.cos(angle) * distance - 40; // -40 to center the sticker
+      const x = centerX + Math.cos(angle) * distance - 40;
       const y = centerY + Math.sin(angle) * distance - 40;
 
       const newSticker: PlacedSticker = {
@@ -162,20 +133,17 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       setPlacedStickers(prev => [...prev, newSticker]);
       setNextZIndex(prev => prev + 1);
       
-      // Play pickup sound
       playSound(pickupSound);
     }
 
     onStickerToggle?.(stickerId, !isCurrentlyEnabled);
   }, [stickers, placedStickers, finalMaxStickers, finalSpawnRadius, nextZIndex, pickupSound, playSound, onStickerToggle]);
 
-  // Reset all stickers
   const resetAllStickers = useCallback(() => {
     setPlacedStickers([]);
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
-  // Handle mouse down on sticker
   const handleStickerMouseDown = useCallback((e: React.MouseEvent, sticker: PlacedSticker) => {
     e.preventDefault();
     initAudio();
@@ -187,7 +155,6 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     setDragOffset({ x: offsetX, y: offsetY });
     setDraggedSticker({ ...sticker, isDragging: true });
     
-    // Bring to front
     const newZIndex = nextZIndex;
     setNextZIndex(prev => prev + 1);
     setPlacedStickers(prev => 
@@ -197,7 +164,6 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     playSound(pickupSound);
   }, [nextZIndex, pickupSound, playSound, initAudio]);
 
-  // Handle mouse move
   useEffect(() => {
     if (!draggedSticker) return;
 
@@ -231,7 +197,6 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     };
   }, [draggedSticker, dragOffset, placeSound, playSound, onStickerMove]);
 
-  // Handle touch events for mobile
   const handleStickerTouchStart = useCallback((e: React.TouchEvent, sticker: PlacedSticker) => {
     e.preventDefault();
     const touch = e.touches[0];
@@ -280,7 +245,6 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     };
   }, [draggedSticker, dragOffset, placeSound, playSound, onStickerMove]);
 
-  // Render popup
   const renderPopup = () => {
     if (!isOpen) return null;
 
@@ -343,7 +307,6 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     return createPortal(popupContent, document.body);
   };
 
-  // Render placed stickers
   const renderPlacedStickers = () => {
     return placedStickers.map((sticker) => (
       <div
@@ -364,6 +327,10 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       </div>
     ));
   };
+
+  if (isSmallScreen && !settings.stickerBoxOnMobile) {
+    return null;
+  }
 
   return (
     <>

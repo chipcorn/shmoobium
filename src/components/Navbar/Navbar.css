@@ -1,11 +1,9 @@
-/* Base Navbar Styles */
 .navbar {
   position: fixed;
   background: #141414;
   z-index: 1000;
 }
 
-/* Body padding to prevent content overlap */
 body.navbar-top {
   padding-top: 80px;
 }
@@ -22,7 +20,6 @@ body.navbar-right {
   padding-right: 240px;
 }
 
-/* Floating navbars need body padding too */
 body.navbar-floating-top {
   padding-top: 96px;
 }
@@ -108,13 +105,11 @@ body.navbar-floating-right {
   flex-wrap: nowrap;
 }
 
-/* Allow wrapping in vertical navbars */
 .navbar--left .navbar__container,
 .navbar--right .navbar__container {
   white-space: normal;
 }
 
-/* Keep horizontal navbars compact */
 .navbar--top .navbar__container,
 .navbar--bottom .navbar__container {
   white-space: nowrap;
@@ -132,7 +127,6 @@ body.navbar-floating-right {
   box-sizing: border-box;
 }
 
-/* Icon Styles */
 .navbar__icon,
 .navbar__icon-button,
 .navbar__icon-link {
@@ -172,7 +166,6 @@ body.navbar-floating-right {
   color: inherit;
 }
 
-/* Navigation Items */
 .navbar__items {
   display: flex;
   align-items: center;
@@ -189,7 +182,6 @@ body.navbar-floating-right {
   margin-right: 0;
 }
 
-/* For vertical navbars */
 .navbar--left .navbar__items,
 .navbar--right .navbar__items {
   flex-direction: column;
@@ -198,19 +190,11 @@ body.navbar-floating-right {
   margin: 0;
 }
 
-/* Make all items same width in horizontal navbars */
 .navbar--top .navbar__items > *,
 .navbar--bottom .navbar__items > * {
   min-width: 120px;
 }
 
-/* Top alignment: items appear right after logo */
-.navbar--left .navbar__items--top,
-.navbar--right .navbar__items--top {
-  /* No special positioning - will appear after logo naturally */
-}
-
-/* Bottom alignment: items pushed to bottom with proper spacing */
 .navbar--left .navbar__items--bottom,
 .navbar--right .navbar__items--bottom {
   margin-top: auto;
@@ -232,6 +216,7 @@ body.navbar-floating-right {
   color: inherit;
   font-size: 16px;
   font-weight: 500;
+  font-family: initial;
   background: none;
   border: none;
   cursor: pointer;
@@ -241,7 +226,6 @@ body.navbar-floating-right {
   box-sizing: border-box;
 }
 
-/* Allow text wrapping in vertical navbars */
 .navbar--left .navbar__item,
 .navbar--right .navbar__item {
   white-space: normal;
@@ -251,7 +235,6 @@ body.navbar-floating-right {
   min-width: auto;
 }
 
-/* Keep horizontal navbars compact */
 .navbar--top .navbar__item,
 .navbar--bottom .navbar__item {
   white-space: nowrap;
@@ -294,14 +277,15 @@ body.navbar-floating-right {
   left: 0;
   background: #141414;
   border: 1px solid #333;
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   z-index: 1002;
   min-width: 100%;
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
   transition: all 0.2s ease;
+  overflow: hidden;
 }
 
 .navbar__dropdown-container:hover .navbar__dropdown,
@@ -311,7 +295,6 @@ body.navbar-floating-right {
   transform: translateY(0);
 }
 
-/* For vertical navbars */
 .navbar--left .navbar__dropdown,
 .navbar--right .navbar__dropdown {
   top: 0;
@@ -326,7 +309,6 @@ body.navbar-floating-right {
   margin-right: 8px;
 }
 
-/* For bottom navbar */
 .navbar--bottom .navbar__dropdown {
   top: auto;
   bottom: 100%;
@@ -341,12 +323,13 @@ body.navbar-floating-right {
 .navbar__dropdown-item {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 8px;
   padding: 12px 16px;
   color: inherit;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
+  font-family: initial;
   background: none;
   border: none;
   cursor: pointer;
@@ -354,19 +337,9 @@ body.navbar-floating-right {
   transition: background-color 0.2s ease;
   white-space: nowrap;
   width: 100%;
-  min-width: 120px;
+  min-width: 160px;
   box-sizing: border-box;
-  text-align: center;
-}
-
-.navbar__dropdown-item:first-child {
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-}
-
-.navbar__dropdown-item:last-child {
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  text-align: left;
 }
 
 .navbar__dropdown-item:hover {
@@ -383,12 +356,12 @@ body.navbar-floating-right {
 }
 
 .navbar__dropdown-item--current {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.15);
   color: inherit;
 }
 
 .navbar__dropdown-item--current:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .navbar__item-icon {
@@ -407,7 +380,6 @@ body.navbar-floating-right {
 .navbar__item-label {
 }
 
-/* Mobile Styles */
 .navbar--mobile .navbar__items {
   display: none;
 }
@@ -443,12 +415,10 @@ body.navbar-floating-right {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Dynamic mobile mode styles */
 .navbar--mobile .navbar__items {
   display: none !important;
 }
 
-/* Show mobile toggle on mobile */
 @media (max-width: 768px) {
   .navbar__container {
     padding: 0 16px;
@@ -460,7 +430,6 @@ body.navbar-floating-right {
   
 
   
-  /* Force left/right navbars to become top navbars on mobile */
   .navbar--left,
   .navbar--right {
     position: fixed;
@@ -472,7 +441,6 @@ body.navbar-floating-right {
     height: auto;
   }
 
-  /* Force floating left/right navbars to become floating top navbars on mobile */
   .navbar--floating.navbar--left,
   .navbar--floating.navbar--right {
     position: fixed;
@@ -495,7 +463,6 @@ body.navbar-floating-right {
     position: relative;
   }
   
-  /* Update body padding for mobile */
   body.navbar-left,
   body.navbar-right {
     padding-left: 0;
@@ -507,7 +474,6 @@ body.navbar-floating-right {
     padding-top: 80px;
   }
 
-  /* Floating navbar adjustments for mobile */
   body.navbar-floating-top {
     padding-top: 96px;
   }
@@ -524,7 +490,6 @@ body.navbar-floating-right {
   }
 }
 
-/* Hamburger - No Animation */
 .navbar__hamburger {
   display: flex;
   flex-direction: column;
@@ -557,27 +522,22 @@ body.navbar-floating-right {
   top: 0;
 }
 
-/* Mobile Menu Base - Completely independent from navbar positioning */
 .navbar__mobile-menu {
   position: fixed !important;
   z-index: 1001;
   background: #141414;
   border: 1px solid #333;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  /* Force complete independence from parent navbar positioning */
   top: 0 !important;
   left: auto !important;
   right: auto !important;
   bottom: auto !important;
   margin: 0 !important;
   padding: 1rem !important;
-  /* Override any inherited positioning */
   inset: auto !important;
-  /* Add transition for smooth animations */
   transition: transform 0.1s ease, right 0.1s ease, left 0.1s ease;
 }
 
-/* Bubble Mobile Menu - Independent positioning with animations */
 .navbar__mobile-menu--bubble {
   position: fixed !important;
   top: 0 !important;
@@ -644,19 +604,15 @@ body.navbar-floating-right {
   margin: 0 !important;
 }
 
-/* Complete independence overrides for all mobile menu types */
 .navbar__mobile-menu--default,
 .navbar__mobile-menu--bubble {
-  /* Force viewport positioning regardless of parent */
   position: fixed !important;
   z-index: 1001 !important;
   margin: 0 !important;
   padding: 1rem !important;
-  /* Override any inherited spacing or positioning */
   inset: auto !important;
 }
 
-/* Default slideover - always touch screen edges with animations */
 .navbar__mobile-menu--default {
   top: 0 !important;
   width: 280px !important;
@@ -688,7 +644,6 @@ body.navbar-floating-right {
   transform: translateX(0) !important;
 }
 
-/* Bubble menu - always touch screen edges with animations */
 .navbar__mobile-menu--bubble {
   top: 0 !important;
   right: -100% !important;
@@ -720,7 +675,6 @@ body.navbar-floating-right {
   left: 0 !important;
 }
 
-/* Mobile Menu Items */
 .navbar__mobile-items {
   display: flex;
   flex-direction: column;
@@ -743,9 +697,10 @@ body.navbar-floating-right {
   color: inherit;
   font-size: 16px;
   font-weight: 500;
+  font-family: initial;
   background: none;
   border: 1px solid #333;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -757,10 +712,12 @@ body.navbar-floating-right {
 }
 
 .navbar__mobile-menu--bubble .navbar__mobile-item {
-  font-size: 1.1rem;
-  padding: 0.8rem 1rem;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: initial;
+  padding: 12px 16px;
   border: 1px solid #333;
-  border-radius: 4px;
+  border-radius: 8px;
   transition: all 0.2s ease;
   width: 100%;
   min-width: 180px;
@@ -774,7 +731,7 @@ body.navbar-floating-right {
 }
 
 .navbar__mobile-menu--bubble .navbar__mobile-item:hover {
-  background: #333;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .navbar__mobile-item--current {
@@ -783,7 +740,7 @@ body.navbar-floating-right {
 }
 
 .navbar__mobile-menu--bubble .navbar__mobile-item--current {
-  background: #444;
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 .navbar__mobile-item--disabled {
@@ -799,6 +756,7 @@ body.navbar-floating-right {
   background: none;
   cursor: pointer;
   font-weight: 500;
+  font-family: initial;
 }
 
 .navbar__mobile-item--active {
@@ -806,7 +764,7 @@ body.navbar-floating-right {
 }
 
 .navbar__mobile-dropdown {
-  margin-top: 0.5rem;
+  margin-top: 8px;
   margin-left: 0;
   border-left: none;
   padding-left: 0;
@@ -821,14 +779,15 @@ body.navbar-floating-right {
   color: inherit;
   font-size: 16px;
   font-weight: 500;
+  font-family: initial;
   background: none;
   border: 1px solid #333;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   text-decoration: none;
   transition: all 0.2s ease;
   white-space: nowrap;
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
   width: 100%;
   min-width: 180px;
   box-sizing: border-box;
@@ -841,7 +800,7 @@ body.navbar-floating-right {
 }
 
 .navbar__mobile-dropdown-item--current {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.15);
   color: inherit;
 }
 
@@ -857,14 +816,18 @@ body.navbar-floating-right {
 .navbar__dropdown-arrow {
   font-size: 12px;
   margin-left: 4px;
-  font-family: inherit;
+  font-family: initial;
+  transition: transform 0.2s ease;
 }
 
 .navbar__item--active .navbar__dropdown-arrow {
   transform: rotate(180deg);
 }
 
-/* Force mobile menus to touch screen edges regardless of navbar style */
+.navbar__dropdown-arrow--open {
+  transform: rotate(180deg);
+}
+
 .navbar--floating .navbar__mobile-menu--default.navbar__mobile-menu--right,
 .navbar--floating .navbar__mobile-menu--default.navbar__mobile-menu--top,
 .navbar--floating .navbar__mobile-menu--default.navbar__mobile-menu--bottom {
@@ -889,7 +852,6 @@ body.navbar-floating-right {
   margin-left: 0 !important;
 }
 
-/* Additional overrides to ensure no gaps from floating navbar margins */
 .navbar--floating .navbar__mobile-menu--bubble {
   right: -100% !important;
   margin-right: 0 !important;
@@ -899,7 +861,6 @@ body.navbar-floating-right {
   left: -100% !important;
 }
 
-/* Animations */
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -930,50 +891,9 @@ body.navbar-floating-right {
   background-color: transparent;
 }
 
-.navbar__dropdown-arrow--open {
-  transform: rotate(180deg);
-}
-
 .navbar__mobile-item--sub {
   margin-left: 16px;
   border-color: #444;
   font-size: 15px;
   font-weight: 400;
 }
-
-.navbar__dropdown-arrow {
-  font-size: 12px;
-  margin-left: 4px;
-  font-family: inherit;
-}
-
-.navbar__item--active .navbar__dropdown-arrow {
-  transform: rotate(180deg);
-}
-
-/* Animations */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.navbar__mobile-menu--bubble {
-  animation: bubbleIn 0.1s ease;
-}
-
-@keyframes bubbleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-} 
