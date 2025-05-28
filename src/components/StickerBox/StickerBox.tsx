@@ -118,26 +118,30 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
   }, [finalEnableSounds]);
 
   const playSound = useCallback(async (soundPath: string) => {
-    if (!finalEnableSounds || !audioContextRef.current) return;
+    if (!finalEnableSounds) return;
     
     try {
-      const audioBuffer = audioBuffersRef.current.get(soundPath);
-      if (audioBuffer) {
-        const source = audioContextRef.current.createBufferSource();
-        const gainNode = audioContextRef.current.createGain();
-        
-        source.buffer = audioBuffer;
-        gainNode.gain.value = 0.3;
-        
-        source.connect(gainNode);
-        gainNode.connect(audioContextRef.current.destination);
-        
-        source.start();
-      } else {
-        const audio = new Audio(soundPath);
-        audio.volume = 0.3;
-        await audio.play();
+      if (audioContextRef.current && audioBuffersRef.current.has(soundPath)) {
+        const audioBuffer = audioBuffersRef.current.get(soundPath);
+        if (audioBuffer) {
+          const source = audioContextRef.current.createBufferSource();
+          const gainNode = audioContextRef.current.createGain();
+          
+          source.buffer = audioBuffer;
+          gainNode.gain.value = 0.3;
+          
+          source.connect(gainNode);
+          gainNode.connect(audioContextRef.current.destination);
+          
+          source.start();
+          return;
+        }
       }
+      
+      const audio = new Audio(soundPath);
+      audio.volume = 0.3;
+      audio.currentTime = 0;
+      await audio.play();
     } catch (error) {
       console.warn('Failed to play sound:', error);
     }
