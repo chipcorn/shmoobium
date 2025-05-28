@@ -20,7 +20,8 @@ export type {
   StickerBoxProps,
   Sticker,
   PlacedSticker,
-  StickerBoxRef
+  StickerBoxRef,
+  StickerSize
 } from './components/StickerBox';
 
 export type { NavbarSettings } from './utils/navbarSettings';

@@ -22,6 +22,8 @@ export interface StickerBoxProps {
   onStickerMove?: (stickerId: string, position: { x: number; y: number }) => void;
 }
 
+export type StickerSize = 'small' | 'medium' | 'large';
+
 export interface PlacedSticker extends Sticker {
   position: {
     x: number;
@@ -29,4 +31,5 @@ export interface PlacedSticker extends Sticker {
   };
   zIndex: number;
   isDragging?: boolean;
+  size?: StickerSize;
 } 

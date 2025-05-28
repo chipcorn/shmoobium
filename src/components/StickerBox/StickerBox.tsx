@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, forwardRef, useImperat
 import { createPortal } from 'react-dom';
 import { cn } from '../../utils/classNames';
 import { getStickerSettings } from '../../utils/stickerSettings';
-import { StickerBoxProps, Sticker, PlacedSticker } from './types';
+import { StickerBoxProps, Sticker, PlacedSticker, StickerSize } from './types';
 import './StickerBox.css';
 
 const STORAGE_KEY = 'shmoobium-stickers';
@@ -27,10 +27,11 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
   const [placedStickers, setPlacedStickers] = useState<PlacedSticker[]>([]);
   const [draggedSticker, setDraggedSticker] = useState<PlacedSticker | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [nextZIndex, setNextZIndex] = useState(1001);
+  const [nextZIndex, setNextZIndex] = useState(901);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   
   const audioContextRef = useRef<AudioContext | null>(null);
+  const audioBuffersRef = useRef<Map<string, AudioBuffer>>(new Map());
 
   const settings = getStickerSettings();
   
@@ -63,9 +64,14 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     if (saved) {
       try {
         const savedStickers = JSON.parse(saved);
-        setPlacedStickers(savedStickers);
+        const stickersWithDefaults = savedStickers.map((sticker: PlacedSticker) => ({
+          ...sticker,
+          size: sticker.size || 'medium',
+          zIndex: sticker.zIndex || 901
+        }));
+        setPlacedStickers(stickersWithDefaults);
         
-        const maxZ = Math.max(...savedStickers.map((s: PlacedSticker) => s.zIndex), 1000);
+        const maxZ = Math.max(...stickersWithDefaults.map((s: PlacedSticker) => s.zIndex), 900);
         setNextZIndex(maxZ + 1);
       } catch (error) {
         console.warn('Failed to load stickers from localStorage:', error);
@@ -79,23 +85,58 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     }
   }, [placedStickers]);
 
-  const initAudio = useCallback(() => {
-    if (!finalEnableSounds || audioContextRef.current) return;
-    
-    try {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-    } catch (error) {
-      console.warn('Audio not supported:', error);
-    }
-  }, [finalEnableSounds]);
-
-  const playSound = useCallback(async (soundPath: string) => {
+  const initAudio = useCallback(async () => {
     if (!finalEnableSounds) return;
     
     try {
-      const audio = new Audio(soundPath);
-      audio.volume = 0.3;
-      await audio.play();
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+      
+      if (audioContextRef.current.state === 'suspended') {
+        await audioContextRef.current.resume();
+      }
+      
+      const soundUrls = [pickupSound, placeSound];
+      
+      for (const url of soundUrls) {
+        if (!audioBuffersRef.current.has(url)) {
+          try {
+            const response = await fetch(url);
+            const arrayBuffer = await response.arrayBuffer();
+            const audioBuffer = await audioContextRef.current!.decodeAudioData(arrayBuffer);
+            audioBuffersRef.current.set(url, audioBuffer);
+          } catch (error) {
+            console.warn(`Failed to load sound: ${url}`, error);
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('Audio initialization failed:', error);
+    }
+  }, [finalEnableSounds, pickupSound, placeSound]);
+
+  const playSound = useCallback(async (soundPath: string) => {
+    if (!finalEnableSounds || !audioContextRef.current) return;
+    
+    try {
+      const audioBuffer = audioBuffersRef.current.get(soundPath);
+      if (audioBuffer) {
+        const source = audioContextRef.current.createBufferSource();
+        const gainNode = audioContextRef.current.createGain();
+        
+        source.buffer = audioBuffer;
+        gainNode.gain.value = 0.3;
+        
+        source.connect(gainNode);
+        gainNode.connect(audioContextRef.current.destination);
+        
+        source.start();
+      } else {
+        const audio = new Audio(soundPath);
+        audio.volume = 0.3;
+        await audio.play();
+      }
     } catch (error) {
       console.warn('Failed to play sound:', error);
     }
@@ -128,6 +169,7 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
         position: { x, y },
         zIndex: nextZIndex,
         enabled: true,
+        size: 'medium',
       };
 
       setPlacedStickers(prev => [...prev, newSticker]);
@@ -144,8 +186,42 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
+  const cycleStickerSize = useCallback((stickerId: string) => {
+    setPlacedStickers(prev => 
+      prev.map(sticker => {
+        if (sticker.id === stickerId) {
+          const currentSize = sticker.size || 'medium';
+          let newSize: StickerSize;
+          
+          switch (currentSize) {
+            case 'small':
+              newSize = 'medium';
+              break;
+            case 'medium':
+              newSize = 'large';
+              break;
+            case 'large':
+              newSize = 'small';
+              break;
+            default:
+              newSize = 'medium';
+          }
+          
+          return { ...sticker, size: newSize };
+        }
+        return sticker;
+      })
+    );
+  }, []);
+
   const handleStickerMouseDown = useCallback((e: React.MouseEvent, sticker: PlacedSticker) => {
     e.preventDefault();
+    
+    if (e.shiftKey) {
+      cycleStickerSize(sticker.id);
+      return;
+    }
+    
     initAudio();
     
     const rect = e.currentTarget.getBoundingClientRect();
@@ -153,16 +229,24 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     const offsetY = e.clientY - rect.top;
     
     setDragOffset({ x: offsetX, y: offsetY });
-    setDraggedSticker({ ...sticker, isDragging: true });
     
     const newZIndex = nextZIndex;
     setNextZIndex(prev => prev + 1);
+    
+    const updatedSticker = { ...sticker, isDragging: true, zIndex: newZIndex };
+    setDraggedSticker(updatedSticker);
+    
     setPlacedStickers(prev => 
-      prev.map(p => p.id === sticker.id ? { ...p, zIndex: newZIndex } : p)
+      prev.map(p => {
+        if (p.id === sticker.id) {
+          return updatedSticker;
+        }
+        return p;
+      })
     );
     
     playSound(pickupSound);
-  }, [nextZIndex, pickupSound, playSound, initAudio]);
+  }, [nextZIndex, pickupSound, playSound, initAudio, cycleStickerSize]);
 
   useEffect(() => {
     if (!draggedSticker) return;
@@ -184,6 +268,15 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       if (draggedSticker) {
         playSound(placeSound);
         onStickerMove?.(draggedSticker.id, draggedSticker.position);
+        
+        setPlacedStickers(prev =>
+          prev.map(p => {
+            if (p.id === draggedSticker.id) {
+              return { ...p, isDragging: false };
+            }
+            return p;
+          })
+        );
       }
       setDraggedSticker(null);
     };
@@ -199,16 +292,33 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
 
   const handleStickerTouchStart = useCallback((e: React.TouchEvent, sticker: PlacedSticker) => {
     e.preventDefault();
+    
+    if (e.touches.length > 1) {
+      cycleStickerSize(sticker.id);
+      return;
+    }
+    
     const touch = e.touches[0];
     const rect = e.currentTarget.getBoundingClientRect();
     const offsetX = touch.clientX - rect.left;
     const offsetY = touch.clientY - rect.top;
     
     setDragOffset({ x: offsetX, y: offsetY });
-    setDraggedSticker({ ...sticker, isDragging: true });
+    
+    const updatedSticker = { ...sticker, isDragging: true };
+    setDraggedSticker(updatedSticker);
+    
+    setPlacedStickers(prev => 
+      prev.map(p => {
+        if (p.id === sticker.id) {
+          return updatedSticker;
+        }
+        return p;
+      })
+    );
     
     playSound(pickupSound);
-  }, [pickupSound, playSound]);
+  }, [pickupSound, playSound, cycleStickerSize]);
 
   useEffect(() => {
     if (!draggedSticker) return;
@@ -232,6 +342,15 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       if (draggedSticker) {
         playSound(placeSound);
         onStickerMove?.(draggedSticker.id, draggedSticker.position);
+        
+        setPlacedStickers(prev =>
+          prev.map(p => {
+            if (p.id === draggedSticker.id) {
+              return { ...p, isDragging: false };
+            }
+            return p;
+          })
+        );
       }
       setDraggedSticker(null);
     };
@@ -313,6 +432,7 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
         key={sticker.id}
         className={cn(
           'sticker-box__placed-sticker',
+          `sticker-box__placed-sticker--${sticker.size || 'medium'}`,
           sticker.isDragging && 'sticker-box__placed-sticker--dragging'
         )}
         style={{

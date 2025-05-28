@@ -1,7 +1,7 @@
 .navbar {
   position: fixed;
   background: #141414;
-  z-index: 1000;
+  z-index: 2000;
 }
 
 body.navbar-top {
