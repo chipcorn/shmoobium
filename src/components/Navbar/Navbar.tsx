@@ -41,9 +41,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   const itemsRef = React.useRef<HTMLDivElement>(null);
   const iconRef = React.useRef<HTMLDivElement>(null);
 
+  const validPositions = ['top', 'bottom', 'left', 'right'];
+  const safePosition = position && validPositions.includes(position) ? position : 'top';
+
   const checkIfItemsFit = React.useCallback(() => {
     if (!navbarRef.current || !itemsRef.current || !iconRef.current) return true;
-    if (position === 'left' || position === 'right') return true;
+    if (safePosition === 'left' || safePosition === 'right') return true;
     
     const navbarWidth = navbarRef.current.offsetWidth;
     const iconWidth = iconRef.current.offsetWidth;
@@ -78,10 +81,10 @@ export const Navbar: React.FC<NavbarProps> = ({
     });
     
     return itemsFit;
-  }, [position, items, isMobile]);
+  }, [safePosition, items, isMobile]);
 
   useEffect(() => {
-    const effectivePosition = isMobile && (position === 'left' || position === 'right') ? 'top' : position;
+    const effectivePosition = isMobile && (safePosition === 'left' || safePosition === 'right') ? 'top' : safePosition;
     
     const bodyClassMap = {
       'top': style === 'floating' ? 'navbar-floating-top' : 'navbar-top',
@@ -139,7 +142,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('scroll', handleScroll);
     };
-  }, [position, style, checkIfItemsFit]);
+  }, [safePosition, style, checkIfItemsFit]);
 
   const isItemActive = (item: NavbarItem): boolean => {
     if (!item.href) return false;
@@ -286,7 +289,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   const getEffectiveAlignment = () => {
-    if (position === 'left' || position === 'right') {
+    if (safePosition === 'left' || safePosition === 'right') {
       if (alignment === 'top' || alignment === 'left') return 'top';
       if (alignment === 'bottom' || alignment === 'right') return 'bottom';
       return 'top';
@@ -400,7 +403,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     }
 
     const getVersionPosition = () => {
-      switch (position) {
+      switch (safePosition) {
         case 'top':
           return { bottom: '8px', right: '8px' };
         case 'bottom':
@@ -444,7 +447,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         ref={navbarRef}
         className={cn(
           'navbar',
-          `navbar--${position}`,
+          `navbar--${safePosition}`,
           `navbar--${style}`,
           isMobile && 'navbar--mobile',
           className
@@ -467,7 +470,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         onClose={closeMobileMenu}
         items={items}
         slideover={slideover}
-        position={position}
+        position={safePosition}
         mobileDropdownOpen={mobileDropdownOpen}
         setMobileDropdownOpen={setMobileDropdownOpen}
         isItemActive={isItemActive}

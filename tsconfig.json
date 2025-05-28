@@ -22,6 +22,7 @@
   "exclude": [
     "node_modules",
     "dist",
+    "example",
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.stories.ts",
