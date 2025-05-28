@@ -5,7 +5,7 @@ import { NavbarProps, NavbarItem } from './types';
 import { VERSION } from '../../version';
 import './Navbar.css';
 
-export const createIcon = (src: string, alt: string, size: number = 24): React.ReactElement => {
+export const createIcon = (src: string, alt: string, size: number = 32): React.ReactElement => {
   return React.createElement('img', {
     src: src,
     alt: alt,
