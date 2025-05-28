@@ -202,7 +202,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   const handleIconError = (event: React.SyntheticEvent<HTMLImageElement>) => {
-    event.currentTarget.src = '/src/assets/shmoobium.webp';
+    event.currentTarget.src = 'https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp';
   };
 
   const renderIcon = () => {
@@ -219,7 +219,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         />
       );
     } else {
-      iconElement = <img src="/src/assets/shmoobium.webp" alt="Shmoobium" />;
+      iconElement = <img src="https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp" alt="Shmoobium" />;
     }
 
     const logoContent = (
