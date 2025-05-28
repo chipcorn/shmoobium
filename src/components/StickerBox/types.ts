@@ -15,8 +15,6 @@ export interface StickerBoxProps {
   maxStickers?: number;
   spawnRadius?: number;
   enableSounds?: boolean;
-  pickupSound?: string;
-  placeSound?: string;
   className?: string;
   onStickerToggle?: (stickerId: string, enabled: boolean) => void;
   onStickerMove?: (stickerId: string, position: { x: number; y: number }) => void;

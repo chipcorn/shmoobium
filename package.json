@@ -8,7 +8,8 @@
   "umd:main": "dist/index.umd.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src/assets"
   ],
   "scripts": {
     "build": "rollup -c",

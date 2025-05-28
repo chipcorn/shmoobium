@@ -17,8 +17,6 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
   maxStickers,
   spawnRadius,
   enableSounds,
-  pickupSound = '/src/assets/StickerPeel.mp3',
-  placeSound = '/src/assets/StickerPlace.mp3',
   className,
   onStickerToggle,
   onStickerMove,
@@ -97,7 +95,7 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
         await audioContextRef.current.resume();
       }
       
-      const soundUrls = [pickupSound, placeSound];
+      const soundUrls = ['./node_modules/shmoobium/dist/assets/StickerPeel.mp3', './node_modules/shmoobium/dist/assets/StickerPlace.mp3'];
       
       for (const url of soundUrls) {
         if (!audioBuffersRef.current.has(url)) {
@@ -114,7 +112,7 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     } catch (error) {
       console.warn('Audio initialization failed:', error);
     }
-  }, [finalEnableSounds, pickupSound, placeSound]);
+  }, [finalEnableSounds]);
 
   const playSound = useCallback(async (soundPath: string) => {
     if (!finalEnableSounds || !audioContextRef.current) return;
@@ -175,11 +173,11 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       setPlacedStickers(prev => [...prev, newSticker]);
       setNextZIndex(prev => prev + 1);
       
-      playSound(pickupSound);
+      playSound('./node_modules/shmoobium/dist/assets/StickerPeel.mp3');
     }
 
     onStickerToggle?.(stickerId, !isCurrentlyEnabled);
-  }, [stickers, placedStickers, finalMaxStickers, finalSpawnRadius, nextZIndex, pickupSound, playSound, onStickerToggle]);
+  }, [stickers, placedStickers, finalMaxStickers, finalSpawnRadius, nextZIndex, playSound, onStickerToggle]);
 
   const resetAllStickers = useCallback(() => {
     setPlacedStickers([]);
@@ -245,8 +243,8 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       })
     );
     
-    playSound(pickupSound);
-  }, [nextZIndex, pickupSound, playSound, initAudio, cycleStickerSize]);
+    playSound('./node_modules/shmoobium/dist/assets/StickerPeel.mp3');
+  }, [nextZIndex, playSound, initAudio, cycleStickerSize]);
 
   useEffect(() => {
     if (!draggedSticker) return;
@@ -266,7 +264,7 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
 
     const handleMouseUp = () => {
       if (draggedSticker) {
-        playSound(placeSound);
+        playSound('./node_modules/shmoobium/dist/assets/StickerPlace.mp3');
         onStickerMove?.(draggedSticker.id, draggedSticker.position);
         
         setPlacedStickers(prev =>
@@ -288,7 +286,7 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [draggedSticker, dragOffset, placeSound, playSound, onStickerMove]);
+  }, [draggedSticker, dragOffset, playSound, onStickerMove]);
 
   const handleStickerTouchStart = useCallback((e: React.TouchEvent, sticker: PlacedSticker) => {
     e.preventDefault();
@@ -317,8 +315,8 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       })
     );
     
-    playSound(pickupSound);
-  }, [pickupSound, playSound, cycleStickerSize]);
+    playSound('./node_modules/shmoobium/dist/assets/StickerPeel.mp3');
+  }, [playSound, cycleStickerSize]);
 
   useEffect(() => {
     if (!draggedSticker) return;
@@ -340,7 +338,7 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
 
     const handleTouchEnd = () => {
       if (draggedSticker) {
-        playSound(placeSound);
+        playSound('./node_modules/shmoobium/dist/assets/StickerPlace.mp3');
         onStickerMove?.(draggedSticker.id, draggedSticker.position);
         
         setPlacedStickers(prev =>
@@ -362,7 +360,7 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       document.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [draggedSticker, dragOffset, placeSound, playSound, onStickerMove]);
+  }, [draggedSticker, dragOffset, playSound, onStickerMove]);
 
   const renderPopup = () => {
     if (!isOpen) return null;
