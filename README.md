@@ -51,7 +51,9 @@ A React component library used for Shmooblesworld.com 3.0
 
 ## Components
 
-   - [navbar.js](https://raw.githubusercontent.com/chipcorn/shmoobium/main/templates/navbar.js) - Place in `shmoobium/navbar.js`
+### Navbar
+
+   - [navbar.js template](https://raw.githubusercontent.com/chipcorn/shmoobium/main/templates/navbar.js) - Place in `shmoobium/navbar.js`
 
 **Features:**
 - Automatic mobile support
@@ -59,7 +61,9 @@ A React component library used for Shmooblesworld.com 3.0
 - Multiple positioning options (top, bottom, left, right) and multiple styles (floating, default, etc)
 - Customizable icons and colors
 
-   - [stickers.js](https://raw.githubusercontent.com/chipcorn/shmoobium/main/templates/stickers.js) - Place in `shmoobium/stickers.js`
+### Stickers
+
+   - [stickers.js template](https://raw.githubusercontent.com/chipcorn/shmoobium/main/templates/stickers.js) - Place in `shmoobium/stickers.js`
 
 **Features:**
 - Drag & drop stickers anywhere on the page
