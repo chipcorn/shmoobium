@@ -1,4 +1,4 @@
-# Shmoobium v1.1.0
+# Shmoobium
 
 A React component library used for Shmooblesworld.com 3.0
 
