@@ -1,6 +1,6 @@
 {
   "name": "shmoobium",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "type": "module",
   "description": "shmoobium...",
   "main": "dist/index.js",
