@@ -111,8 +111,11 @@ export const Navbar: React.FC<NavbarProps> = ({
     setCurrentUrl(window.location.href);
 
     const handleResize = () => {
+      const isSmallScreen = window.innerWidth <= 768;
       const itemsFit = checkIfItemsFit();
-      const shouldBeMobile = !itemsFit;
+      
+      // Force mobile for left/right navbars on small screens OR when items don't fit
+      const shouldBeMobile = isSmallScreen && (safePosition === 'left' || safePosition === 'right') || !itemsFit;
       
       if (shouldBeMobile !== isMobile) {
         setIsMobile(shouldBeMobile);
@@ -148,7 +151,19 @@ export const Navbar: React.FC<NavbarProps> = ({
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('scroll', handleScroll);
     };
-  }, [safePosition, style, checkIfItemsFit]);
+  }, [safePosition, style, checkIfItemsFit, isMobile]);
+
+  useEffect(() => {
+    if (mobileMenuOpen && isMobile) {
+      document.body.classList.add('mobile-menu-open');
+    } else {
+      document.body.classList.remove('mobile-menu-open');
+    }
+    
+    return () => {
+      document.body.classList.remove('mobile-menu-open');
+    };
+  }, [mobileMenuOpen, isMobile]);
 
   const isItemActive = (item: NavbarItem): boolean => {
     if (!item.href) return false;
@@ -294,8 +309,17 @@ export const Navbar: React.FC<NavbarProps> = ({
     );
   };
 
+  const getEffectivePosition = () => {
+    if (isMobile && (safePosition === 'left' || safePosition === 'right')) {
+      return 'top';
+    }
+    return safePosition;
+  };
+
   const getEffectiveAlignment = () => {
-    if (safePosition === 'left' || safePosition === 'right') {
+    const effectivePosition = getEffectivePosition();
+    
+    if (effectivePosition === 'left' || effectivePosition === 'right') {
       if (alignment === 'top' || alignment === 'left') return 'top';
       if (alignment === 'bottom' || alignment === 'right') return 'bottom';
       return 'top';
@@ -453,7 +477,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         ref={navbarRef}
         className={cn(
           'navbar',
-          `navbar--${safePosition}`,
+          `navbar--${getEffectivePosition()}`,
           `navbar--${style}`,
           isMobile && 'navbar--mobile',
           className
@@ -476,7 +500,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         onClose={closeMobileMenu}
         items={items}
         slideover={slideover}
-        position={safePosition}
+        position={getEffectivePosition()}
         mobileDropdownOpen={mobileDropdownOpen}
         setMobileDropdownOpen={setMobileDropdownOpen}
         isItemActive={isItemActive}
@@ -502,6 +526,30 @@ const MobileMenuPortal: React.FC<{
   const menuRef = React.useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = React.useState(false);
   const [shouldRender, setShouldRender] = React.useState(false);
+  const [menuWidth, setMenuWidth] = React.useState(320);
+
+  const calculateMenuWidth = React.useCallback(() => {
+    let maxWidth = 160;
+    
+    items.forEach(item => {
+      const itemTextLength = item.label.length * 8 + 80;
+      maxWidth = Math.max(maxWidth, itemTextLength);
+      
+      if (item.dropdown) {
+        item.dropdown.forEach(dropdownItem => {
+          const dropdownTextLength = dropdownItem.label.length * 8 + 80;
+          maxWidth = Math.max(maxWidth, dropdownTextLength);
+        });
+      }
+    });
+    
+    return Math.min(Math.max(maxWidth, 200), 340);
+  }, [items]);
+
+  React.useEffect(() => {
+    const width = calculateMenuWidth();
+    setMenuWidth(width);
+  }, [calculateMenuWidth]);
 
   React.useEffect(() => {
     if (isOpen) {
@@ -524,9 +572,28 @@ const MobileMenuPortal: React.FC<{
       }
     };
 
+    const handleScroll = (event: Event) => {
+      if (menuRef.current && menuRef.current.contains(event.target as Node)) {
+        return;
+      }
+      onClose();
+    };
+
+    const handleResize = () => {
+      const width = calculateMenuWidth();
+      setMenuWidth(width);
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen, onClose]);
+    document.addEventListener('scroll', handleScroll, true);
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('scroll', handleScroll, true);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isOpen, onClose, calculateMenuWidth]);
 
   if (!shouldRender) return null;
 
@@ -540,8 +607,18 @@ const MobileMenuPortal: React.FC<{
   const positionClass = `navbar__mobile-menu--${slideoverPosition}`;
   const visibleClass = isVisible ? 'navbar__mobile-menu--visible' : '';
 
+  const dynamicStyles = {
+    ...customStyles,
+    width: `${menuWidth}px`
+  };
+
   const menuContent = (
-    <div ref={menuRef} className={cn('navbar__mobile-menu', menuClass, positionClass, visibleClass)} style={customStyles}>
+    <div 
+      ref={menuRef} 
+      className={cn('navbar__mobile-menu', menuClass, positionClass, visibleClass)} 
+      style={dynamicStyles}
+      onScroll={(e) => e.stopPropagation()}
+    >
       <div className="navbar__mobile-items">
         {items.map((item, index) => {         
           if (item.hideOnMobile) {

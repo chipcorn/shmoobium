@@ -62,11 +62,22 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     if (saved) {
       try {
         const savedStickers = JSON.parse(saved);
-        const stickersWithDefaults = savedStickers.map((sticker: PlacedSticker) => ({
-          ...sticker,
-          size: sticker.size || 'medium',
-          zIndex: sticker.zIndex || 901
-        }));
+        const stickersWithDefaults = savedStickers.map((sticker: PlacedSticker) => {
+          let position = sticker.position;
+          
+          if (position.x > 100 || position.y > 100) {
+            const percentX = (position.x / window.innerWidth) * 100;
+            const percentY = (position.y / window.innerHeight) * 100;
+            position = { x: percentX, y: percentY };
+          }
+          
+          return {
+            ...sticker,
+            size: sticker.size || 'medium',
+            zIndex: sticker.zIndex || 901,
+            position: position
+          };
+        });
         setPlacedStickers(stickersWithDefaults);
         
         const maxZ = Math.max(...stickersWithDefaults.map((s: PlacedSticker) => s.zIndex), 900);
@@ -121,6 +132,22 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     if (!finalEnableSounds) return;
     
     try {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        const audio = new Audio(soundPath);
+        audio.volume = 0.2;
+        audio.preload = 'none';
+        
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.warn('Mobile audio play failed (this is normal):', error);
+          });
+        }
+        return;
+      }
+      
       if (audioContextRef.current && audioBuffersRef.current.has(soundPath)) {
         const audioBuffer = audioBuffersRef.current.get(soundPath);
         if (audioBuffer) {
@@ -155,6 +182,7 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     
     if (isCurrentlyEnabled) {
       setPlacedStickers(prev => prev.filter(p => p.id !== stickerId));
+      playSound('https://unpkg.com/shmoobium@latest/dist/assets/StickerPlace.mp3');
     } else {
       if (placedStickers.length >= finalMaxStickers) {
         alert(`Maximum ${finalMaxStickers} stickers allowed!`);
@@ -166,12 +194,15 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       
       const angle = Math.random() * Math.PI * 2;
       const distance = Math.random() * finalSpawnRadius + 50;
-      const x = centerX + Math.cos(angle) * distance - 40;
-      const y = centerY + Math.sin(angle) * distance - 40;
+      const absoluteX = centerX + Math.cos(angle) * distance - 40;
+      const absoluteY = centerY + Math.sin(angle) * distance - 40;
+      
+      const percentX = (absoluteX / window.innerWidth) * 100;
+      const percentY = (absoluteY / window.innerHeight) * 100;
 
       const newSticker: PlacedSticker = {
         ...sticker,
-        position: { x, y },
+        position: { x: percentX, y: percentY },
         zIndex: nextZIndex,
         enabled: true,
         size: 'medium',
@@ -257,13 +288,16 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     if (!draggedSticker) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      const newX = e.clientX - dragOffset.x;
-      const newY = e.clientY - dragOffset.y;
+      const absoluteX = e.clientX - dragOffset.x;
+      const absoluteY = e.clientY - dragOffset.y;
+      
+      const percentX = (absoluteX / window.innerWidth) * 100;
+      const percentY = (absoluteY / window.innerHeight) * 100;
       
       setPlacedStickers(prev =>
         prev.map(p =>
           p.id === draggedSticker.id
-            ? { ...p, position: { x: newX, y: newY } }
+            ? { ...p, position: { x: percentX, y: percentY } }
             : p
         )
       );
@@ -331,13 +365,16 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     const handleTouchMove = (e: TouchEvent) => {
       e.preventDefault();
       const touch = e.touches[0];
-      const newX = touch.clientX - dragOffset.x;
-      const newY = touch.clientY - dragOffset.y;
+      const absoluteX = touch.clientX - dragOffset.x;
+      const absoluteY = touch.clientY - dragOffset.y;
+      
+      const percentX = (absoluteX / window.innerWidth) * 100;
+      const percentY = (absoluteY / window.innerHeight) * 100;
       
       setPlacedStickers(prev =>
         prev.map(p =>
           p.id === draggedSticker.id
-            ? { ...p, position: { x: newX, y: newY } }
+            ? { ...p, position: { x: percentX, y: percentY } }
             : p
         )
       );
@@ -441,8 +478,8 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
           sticker.isDragging && 'sticker-box__placed-sticker--dragging'
         )}
         style={{
-          left: sticker.position.x,
-          top: sticker.position.y,
+          left: `${sticker.position.x}%`,
+          top: `${sticker.position.y}%`,
           zIndex: sticker.zIndex,
         }}
         onMouseDown={(e) => handleStickerMouseDown(e, sticker)}

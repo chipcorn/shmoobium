@@ -38,4 +38,58 @@ export interface NavbarProps {
   itemClassName?: string;
   iconClassName?: string;
   onItemClick?: (item: NavbarItem) => void;
+}
+
+export interface NavbarBrandProps {
+  href?: string;
+  className?: string;
+  children: React.ReactNode;
+}
+
+export interface NavbarItemsProps {
+  alignment?: 'left' | 'center' | 'right';
+  className?: string;
+  children: React.ReactNode;
+}
+
+export interface NavbarItemProps {
+  href?: string;
+  active?: boolean;
+  className?: string;
+  onClick?: () => void;
+  children: React.ReactNode;
+}
+
+export interface NavbarDropdownProps {
+  label: string;
+  className?: string;
+  children: React.ReactNode;
+}
+
+export interface NavbarTheme {
+  navbar: {
+    base: string;
+    positions: Record<string, string>;
+    variants: Record<string, string>;
+  };
+  brand: {
+    base: string;
+  };
+  items: {
+    base: string;
+    alignment: Record<string, string>;
+  };
+  item: {
+    base: string;
+    states: {
+      default: string;
+      active: string;
+      hover: string;
+    };
+  };
+  dropdown: {
+    trigger: string;
+    menu: string;
+    item: string;
+  };
 } 

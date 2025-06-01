@@ -158,6 +158,13 @@
   opacity: 1;
 }
 
+body:has(.sticker-box__overlay--visible) {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
 .sticker-box__placed-sticker {
   position: fixed;
   z-index: 900;

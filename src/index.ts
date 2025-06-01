@@ -1,28 +1,30 @@
-// Main exports
-export { Navbar, createIcon } from './components/Navbar/Navbar';
-export { StickerBox } from './components/StickerBox';
-export { cn } from './utils/classNames';
-export { getNavbarSettings, loadNavbarSettings } from './utils/navbarSettings';
-export { getStickerSettings, loadStickerSettings } from './utils/stickerSettings';
+// Data attribute system - main export
+export { initializeShmoobiumComponents } from './utils/data-attributes';
 
-// Type exports
+// Version
+export { VERSION } from './version';
+
+// Legacy React components (for backward compatibility)
+export { Navbar } from './components/Navbar';
+export { createIcon } from './components/Navbar/Navbar';
+export { StickerBox } from './components/StickerBox';
+
+// Utilities
+export { cn } from './utils/classNames';
+
+// Type exports (for TypeScript users)
 export type { 
   NavbarProps, 
-  NavbarItem, 
-  NavbarIcon, 
-  NavbarPosition, 
-  NavbarStyle, 
-  NavbarAlignment,
-  SlideoverStyle
+  NavbarItem
 } from './components/Navbar/types';
 
 export type {
   StickerBoxProps,
   Sticker,
-  PlacedSticker,
-  StickerBoxRef,
-  StickerSize
-} from './components/StickerBox';
+  PlacedSticker
+} from './components/StickerBox/types';
 
-export type { NavbarSettings } from './utils/navbarSettings';
-export type { StickerSettings } from './utils/stickerSettings';
+import './utils/data-attributes';
+
+import './components/Navbar/Navbar.css';
+import './components/StickerBox/StickerBox.css';
