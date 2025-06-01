@@ -11,6 +11,7 @@ export { StickerBox } from './components/StickerBox';
 
 // Utilities
 export { cn } from './utils/classNames';
+export { loadNavbar } from './utils/navbar-loader';
 
 // Type exports (for TypeScript users)
 export type { 
@@ -25,6 +26,7 @@ export type {
 } from './components/StickerBox/types';
 
 import './utils/data-attributes';
+import { loadNavbar } from './utils/navbar-loader';
 
 import './components/Navbar/Navbar.css';
 import './components/StickerBox/StickerBox.css';

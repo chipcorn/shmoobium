@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Navbar, createIcon } from '../components/Navbar/Navbar';
 import { StickerBox } from '../components/StickerBox';
+import { loadNavbar } from './navbar-loader';
 
 interface ComponentConfig {
   [key: string]: any;
@@ -234,9 +235,24 @@ export function initializeShmoobiumComponents() {
         break;
     }
   });
+  
+  const navbarContainer = document.getElementById('navbar');
+  if (navbarContainer) {
+    const navbarSrc = navbarContainer.getAttribute('data-navbar-src');
+    if (navbarSrc) {
+      loadNavbar(navbarSrc, '#navbar').catch(error => {
+        console.error('Failed to auto-load navbar:', error);
+      });
+    }
+  }
 }
 
 if (typeof window !== 'undefined') {
+  window.Shmoobium = {
+    init: initializeShmoobiumComponents,
+    loadNavbar: loadNavbar
+  };
+  
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeShmoobiumComponents);
   } else {

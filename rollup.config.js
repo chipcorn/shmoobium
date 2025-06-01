@@ -3,9 +3,26 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import postcss from 'rollup-plugin-postcss';
 import dts from 'rollup-plugin-dts';
-import { readFileSync } from 'fs';
+import { readFileSync, cpSync, existsSync, mkdirSync } from 'fs';
+import { join } from 'path';
 
 const packageJson = JSON.parse(readFileSync('./package.json', 'utf8'));
+
+function copyAssets() {
+  return {
+    name: 'copy-assets',
+    generateBundle() {
+      if (!existsSync('dist')) {
+        mkdirSync('dist', { recursive: true });
+      }
+      
+      if (existsSync('src/assets')) {
+        cpSync('src/assets', 'dist/assets', { recursive: true });
+        console.log('✅ Copied assets to dist/assets');
+      }
+    }
+  };
+}
 
 export default [
   {
@@ -45,6 +62,7 @@ export default [
         extract: true,
         minimize: true,
       }),
+      copyAssets(),
     ],
   },
   {

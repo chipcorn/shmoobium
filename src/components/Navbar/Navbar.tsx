@@ -172,23 +172,33 @@ export const Navbar: React.FC<NavbarProps> = ({
     const currentPage = window.location.pathname.split('/').pop() || '';
     const currentHref = window.location.href;
     
-    console.log('🔍 Checking active state for:', item.label);
-    console.log('   Item href:', item.href);
-    console.log('   Current page:', currentPage);
-    console.log('   Current path:', currentPath);
-    console.log('   Current href:', currentHref);
+    const itemHref = item.href;
     
-    if (item.href === currentPage) {
-      console.log('✅ ACTIVE MATCH found for:', item.label);
+    if (itemHref === currentHref) {
       return true;
     }
     
-    if (item.href === 'index.html' && (currentPage === 'index.html' || currentPage === '')) {
-      console.log('✅ ACTIVE MATCH (index) found for:', item.label);
+    if (itemHref === currentPath) {
       return true;
     }
     
-    console.log('❌ No match for:', item.label);
+    const itemPage = itemHref.split('/').pop() || '';
+    if (itemPage === currentPage) {
+      return true;
+    }
+    
+    if (itemHref === 'index.html' && (currentPage === 'index.html' || currentPage === '' || currentPath === '/')) {
+      return true;
+    }
+    
+    if (itemHref === '/' && (currentPage === 'index.html' || currentPage === '' || currentPath === '/')) {
+      return true;
+    }
+    
+    if (itemHref.startsWith('#') && currentHref.includes(itemHref)) {
+      return true;
+    }
+    
     return false;
   };
 
