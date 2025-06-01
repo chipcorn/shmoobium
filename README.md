@@ -1,4 +1,4 @@
-# Shmoobium v2.0.3
+# Shmoobium v2.0.4
 
 A React component library for Shmooblesworld.com 3.0
 

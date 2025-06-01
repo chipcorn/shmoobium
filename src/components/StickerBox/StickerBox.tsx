@@ -65,10 +65,9 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
         const stickersWithDefaults = savedStickers.map((sticker: PlacedSticker) => {
           let position = sticker.position;
           
-          if (position.x > 100 || position.y > 100) {
+          if (position.x > 100) {
             const percentX = (position.x / window.innerWidth) * 100;
-            const percentY = (position.y / window.innerHeight) * 100;
-            position = { x: percentX, y: percentY };
+            position = { x: percentX, y: position.y };
           }
           
           return {
@@ -198,11 +197,10 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       const absoluteY = centerY + Math.sin(angle) * distance - 40;
       
       const percentX = (absoluteX / window.innerWidth) * 100;
-      const percentY = (absoluteY / window.innerHeight) * 100;
 
       const newSticker: PlacedSticker = {
         ...sticker,
-        position: { x: percentX, y: percentY },
+        position: { x: percentX, y: absoluteY },
         zIndex: nextZIndex,
         enabled: true,
         size: 'medium',
@@ -260,9 +258,11 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     
     initAudio();
     
-    const rect = e.currentTarget.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left;
-    const offsetY = e.clientY - rect.top;
+    const stickerElement = e.currentTarget;
+    const stickerRect = stickerElement.getBoundingClientRect();
+    
+    const offsetX = e.clientX - stickerRect.left;
+    const offsetY = e.clientY - stickerRect.top;
     
     setDragOffset({ x: offsetX, y: offsetY });
     
@@ -292,12 +292,11 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       const absoluteY = e.clientY - dragOffset.y;
       
       const percentX = (absoluteX / window.innerWidth) * 100;
-      const percentY = (absoluteY / window.innerHeight) * 100;
       
       setPlacedStickers(prev =>
         prev.map(p =>
           p.id === draggedSticker.id
-            ? { ...p, position: { x: percentX, y: percentY } }
+            ? { ...p, position: { x: percentX, y: absoluteY } }
             : p
         )
       );
@@ -338,9 +337,11 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
     }
     
     const touch = e.touches[0];
-    const rect = e.currentTarget.getBoundingClientRect();
-    const offsetX = touch.clientX - rect.left;
-    const offsetY = touch.clientY - rect.top;
+    const stickerElement = e.currentTarget;
+    const stickerRect = stickerElement.getBoundingClientRect();
+    
+    const offsetX = touch.clientX - stickerRect.left;
+    const offsetY = touch.clientY - stickerRect.top;
     
     setDragOffset({ x: offsetX, y: offsetY });
     
@@ -369,12 +370,11 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
       const absoluteY = touch.clientY - dragOffset.y;
       
       const percentX = (absoluteX / window.innerWidth) * 100;
-      const percentY = (absoluteY / window.innerHeight) * 100;
       
       setPlacedStickers(prev =>
         prev.map(p =>
           p.id === draggedSticker.id
-            ? { ...p, position: { x: percentX, y: percentY } }
+            ? { ...p, position: { x: percentX, y: absoluteY } }
             : p
         )
       );
@@ -479,7 +479,7 @@ export const StickerBox = forwardRef<StickerBoxRef, StickerBoxProps>(({
         )}
         style={{
           left: `${sticker.position.x}%`,
-          top: `${sticker.position.y}%`,
+          top: `${sticker.position.y}px`,
           zIndex: sticker.zIndex,
         }}
         onMouseDown={(e) => handleStickerMouseDown(e, sticker)}
