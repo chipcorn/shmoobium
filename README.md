@@ -1,4 +1,4 @@
-# Shmoobium v2.0.0
+# Shmoobium v2.0.3
 
 A React component library for Shmooblesworld.com 3.0
 
@@ -21,7 +21,9 @@ A React component library for Shmooblesworld.com 3.0
 
 2. Use HTML data attributes to add components:
 
-### Navbar Template
+## Navbar Installation
+
+1. Create a file `navbar.html` with the following contents
 
 ```html
 <nav data-shmoobium="navbar"
@@ -29,7 +31,7 @@ A React component library for Shmooblesworld.com 3.0
      data-style="default"
      data-slideover="default"
      data-alignment="right"
-     data-logo-text="My Website"
+     data-logo-text="Shmoobium"
      data-logo-href="index.html"
      data-font-color="#ffffff"
      data-background-color="#141414"
@@ -37,13 +39,52 @@ A React component library for Shmooblesworld.com 3.0
      data-icon-src="https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp"
      data-icon-alt="Logo">
   <a href="index.html" data-nav-item data-icon="https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp">Home</a>
+
   <a href="about.html" data-nav-item data-icon="https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp">About</a>
+
   <a href="#" data-nav-item data-dropdown="true" data-icon="https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp">
     Dropdown
-    <a href="https://example.com" data-dropdown-item data-icon="https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp">Link 1</a>
-    <a href="https://example2.com" data-dropdown-item data-icon="https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp">Link 2</a>
+    <a href="https://www.shmooblesworld.com" data-dropdown-item data-icon="https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp">Shmooblesworld.com</a>
+    <a href="https://www.shmoob.net" data-dropdown-item data-icon="https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp">Shmoob.net</a>
   </a>
 </nav>
+```
+
+2. Link the `navbar.html` file:
+
+```html
+<body>
+    <div id="navbar" data-navbar-src="navbar.html"></div> 
+
+    <main>
+
+    </main>
+</body>
+```
+
+## Full Example
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Shmoobium Website</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/shmoobium@2/dist/index.umd.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/shmoobium@2/dist/index.css">
+</head>
+
+<body>
+    <div id="navbar" data-navbar-src="navbar.html"></div> 
+
+    <main>
+
+    </main>
+</body>
+</html>
 ```
 
 **All Navbar Options:**
@@ -65,7 +106,9 @@ A React component library for Shmooblesworld.com 3.0
 - `data-dropdown="true"` - Makes item a dropdown
 - `data-dropdown-item` - Items inside dropdown
 
-### Sticker Container Template
+## Stickers Installation
+
+1. Add the sticker component in your HTML
 
 ```html
 <div data-shmoobium="sticker-container"
@@ -73,24 +116,20 @@ A React component library for Shmooblesworld.com 3.0
      data-enable-sounds="true"
      data-spawn-radius="150"
      data-sticker-box-on-mobile="true">
-  <img data-sticker data-enabled="false" src="https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp" alt="Shmoobium">
-</div>
 
-<!-- Add this button somewhere to open the sticker box -->
+  <img data-sticker data-enabled="false" src="https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp" alt="Shmoobium">
+
+</div>
+```
+
+2. Add a button to open the sticker box
+
+```html
 <button onclick="openStickerBox()">Open Stickers</button>
 ```
 
-**All Sticker Options:**
-- `data-max-stickers="15"` - Maximum number of stickers on screen
-- `data-enable-sounds="true"` - Play sounds on interaction
-- `data-spawn-radius="150"` - Pixels around spawn point
-- `data-sticker-box-on-mobile="false"` - Show stickers on mobile devices
-
-**Sticker Item Options:**
-- `data-sticker` - Makes an image a draggable sticker
-- `data-enabled="false"` - Whether sticker starts enabled (true/false)
-
 ### Complete Example
+
 
 ```html
 <!DOCTYPE html>
@@ -101,29 +140,35 @@ A React component library for Shmooblesworld.com 3.0
     <title>My Shmoobium Website</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/shmoobium@1/dist/index.umd.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/shmoobium@1/dist/index.css">
+    <script src="https://unpkg.com/shmoobium@2/dist/index.umd.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/shmoobium@2/dist/index.css">
 </head>
+
 <body>
-    <!-- Navbar with minimal customization -->
-    <nav data-shmoobium="navbar" 
-         data-logo-text="My Site"
-         data-style="floating">
-      <a href="/" data-nav-item>Home</a>
-      <a href="/about" data-nav-item>About</a>
-      <a href="/blog" data-nav-item>Blog</a>
-    </nav>
-    
-    <main style="margin-top: 80px; padding: 2rem;">
-        <h1>Welcome to My Website!</h1>
-        <p>Drag the stickers around! Shift + right-click to resize them.</p>
+    <div data-shmoobium="sticker-container"
+     data-max-stickers="15"
+     data-enable-sounds="true"
+     data-spawn-radius="150"
+     data-sticker-box-on-mobile="true">
+
+  <img data-sticker data-enabled="false" src="https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp" alt="Shmoobium">
+  
+</div>
+
+    <main>
         <button onclick="openStickerBox()">Open Stickers</button>
     </main>
-    
-    <!-- Stickers with default settings -->
-    <div data-shmoobium="sticker-container">
-      <img data-sticker src="https://unpkg.com/shmoobium@1/dist/assets/shmoobium.webp" alt="Shmoobium">
-    </div>
 </body>
 </html>
 ```
+
+**All Sticker Options:**
+- `data-max-stickers="15"` - Maximum number of stickers on screen
+- `data-enable-sounds="true"` - Play sticker sounds
+- `data-spawn-radius="150"` - Pixels around spawn point
+- `data-sticker-box-on-mobile="false"` - Show stickers on mobile devices
+
+**Sticker Item Options:**
+- `data-sticker` - Makes an image a draggable sticker
+- `data-enabled="false"` - Whether sticker starts enabled (true/false)
+- `alt="shmoobium"` - Sticker name + alt text
