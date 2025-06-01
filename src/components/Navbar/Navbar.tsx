@@ -176,6 +176,12 @@ export const Navbar: React.FC<NavbarProps> = ({
     
     const itemHref = item.href;
     
+    if (currentPage === '' || currentPath === '/') {
+      if (itemHref === '/' || itemHref === 'index.html') {
+        return true;
+      }
+    }
+    
     if (itemHref === currentHref) {
       return true;
     }
@@ -185,15 +191,11 @@ export const Navbar: React.FC<NavbarProps> = ({
     }
     
     const itemPage = itemHref.split('/').pop() || '';
-    if (itemPage === currentPage) {
+    if (itemPage === currentPage && currentPage !== '') {
       return true;
     }
     
-    if (itemHref === 'index.html' && (currentPage === 'index.html' || currentPage === '' || currentPath === '/')) {
-      return true;
-    }
-    
-    if (itemHref === '/' && (currentPage === 'index.html' || currentPage === '' || currentPath === '/')) {
+    if (itemHref === 'index.html' && currentPage === 'index.html') {
       return true;
     }
     

@@ -166,7 +166,7 @@ body:has(.sticker-box__overlay--visible) {
 }
 
 .sticker-box__placed-sticker {
-  position: fixed;
+  position: absolute;
   z-index: 900;
   cursor: grab;
   transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.4s ease;
