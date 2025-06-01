@@ -9,7 +9,14 @@ export const createIcon = (src: string, alt: string, size: number = 32): React.R
   return React.createElement('img', {
     src: src,
     alt: alt,
-    style: { width: `${size}px`, height: `${size}px` }
+    style: { width: `${size}px`, height: `${size}px` },
+    onError: (e: React.SyntheticEvent<HTMLImageElement>) => {
+      const img = e.currentTarget;
+      if (img.dataset.fallbackAttempted !== 'true') {
+        img.dataset.fallbackAttempted = 'true';
+        img.src = 'https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp';
+      }
+    }
   });
 };
 
@@ -67,17 +74,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     
     estimatedWidth += (items.length - 1) * 12;
     
-    const availableSpace = navbarWidth - iconWidth - 70 + 50; // 40px padding + 30px mobile toggle space + 50px overflow allowance
+    const availableSpace = navbarWidth - iconWidth - 70 + 50;
     const itemsFit = estimatedWidth <= availableSpace;
-    
-    console.log('🔍 Navbar fit check:', {
-      navbarWidth,
-      iconWidth,
-      estimatedWidth,
-      availableSpace,
-      itemsFit,
-      currentMode: isMobile ? 'mobile' : 'desktop'
-    });
     
     return itemsFit;
   }, [safePosition, items, isMobile]);
@@ -131,6 +129,10 @@ export const Navbar: React.FC<NavbarProps> = ({
       if (!target.closest('.navbar__mobile-menu') && !target.closest('.navbar__mobile-toggle')) {
         setMobileMenuOpen(false);
         setMobileDropdownOpen(null);
+      }
+      
+      if (!target.closest('.navbar__dropdown-container') && !target.closest('.navbar__dropdown')) {
+        setOpenDropdown(null);
       }
     };
 
@@ -227,7 +229,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   const handleIconError = (event: React.SyntheticEvent<HTMLImageElement>) => {
-    event.currentTarget.src = 'https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp';
+    const img = event.currentTarget;
+    if (img.dataset.fallbackAttempted !== 'true') {
+      img.dataset.fallbackAttempted = 'true';
+      img.src = 'https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp';
+    }
   };
 
   const renderIcon = () => {
@@ -542,18 +548,25 @@ const MobileMenuPortal: React.FC<{
     let maxWidth = 160;
     
     items.forEach(item => {
-      const itemTextLength = item.label.length * 8 + 80;
-      maxWidth = Math.max(maxWidth, itemTextLength);
+      const itemTextLength = item.label.length * 8 + 60;
+      const hasIcon = !!item.icon;
+      let itemWidth = itemTextLength;
+      if (hasIcon) itemWidth += 35;
+      maxWidth = Math.max(maxWidth, itemWidth);
       
-      if (item.dropdown) {
+      if (item.dropdown && item.dropdown.length > 0) {
         item.dropdown.forEach(dropdownItem => {
-          const dropdownTextLength = dropdownItem.label.length * 8 + 80;
-          maxWidth = Math.max(maxWidth, dropdownTextLength);
+          const dropdownTextLength = dropdownItem.label.length * 8 + 60;
+          const dropHasIcon = !!dropdownItem.icon;
+          let dropItemWidth = dropdownTextLength;
+          if (dropHasIcon) dropItemWidth += 35;
+          maxWidth = Math.max(maxWidth, dropItemWidth);
         });
       }
     });
     
-    return Math.min(Math.max(maxWidth, 200), 340);
+    const finalWidth = Math.min(Math.max(maxWidth, 180), 320);
+    return finalWidth;
   }, [items]);
 
   React.useEffect(() => {
@@ -619,7 +632,9 @@ const MobileMenuPortal: React.FC<{
 
   const dynamicStyles = {
     ...customStyles,
-    width: `${menuWidth}px`
+    width: `${menuWidth}px !important`,
+    minWidth: `${menuWidth}px !important`,
+    maxWidth: `${menuWidth}px !important`,
   };
 
   const menuContent = (

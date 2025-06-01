@@ -1,5 +1,5 @@
 // Data attribute system - main export
-export { initializeShmoobiumComponents } from './utils/data-attributes';
+export { initializeShmoobiumComponents, initSingle } from './utils/data-attributes';
 
 // Version
 export { VERSION } from './version';

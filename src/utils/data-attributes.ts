@@ -77,27 +77,23 @@ function initializeNavbar(element: ShmoobiumElement) {
   const navItems = Array.from(element.querySelectorAll('[data-nav-item]')).map(item => {
     const linkElement = item as HTMLAnchorElement;
     const hasDropdown = linkElement.dataset.dropdown === 'true';
-    
-    console.log('=== Processing nav item ===');
-    console.log('Element:', linkElement);
-    console.log('Has dropdown:', hasDropdown);
-    console.log('Full HTML:', linkElement.outerHTML);
+    const isDisabled = linkElement.dataset.disabled === 'true';
     
     let dropdownItems: any[] | undefined = undefined;
     let mainLabel = '';
     
     if (hasDropdown) {
       const dropdownElements = Array.from(linkElement.querySelectorAll('[data-dropdown-item]'));
-      console.log('Found dropdown elements count:', dropdownElements.length);
       
       if (dropdownElements.length > 0) {
         dropdownItems = dropdownElements.map(dropItem => {
           const dropLink = dropItem as HTMLAnchorElement;
           const label = dropLink.textContent?.trim() || '';
-          console.log('Dropdown item found:', label, dropLink.href);
+          const dropIsDisabled = dropLink.dataset.disabled === 'true';
           return {
             label: label,
             href: dropLink.href || '#',
+            disabled: dropIsDisabled,
             icon: dropLink.dataset.icon ? createIcon(dropLink.dataset.icon, label) : undefined
           };
         });
@@ -111,9 +107,6 @@ function initializeNavbar(element: ShmoobiumElement) {
           mainLabel = 'Dropdown';
         }
       }
-      
-      console.log('Processed dropdown items:', dropdownItems);
-      console.log('Main label extracted:', mainLabel);
     } else {
       mainLabel = linkElement.textContent?.trim() || '';
     }
@@ -121,17 +114,13 @@ function initializeNavbar(element: ShmoobiumElement) {
     const result = {
       label: mainLabel,
       href: hasDropdown ? '#' : (linkElement.href || '#'),
+      disabled: isDisabled,
       icon: linkElement.dataset.icon ? createIcon(linkElement.dataset.icon, mainLabel) : undefined,
       dropdown: dropdownItems
     };
     
-    console.log('Final nav item result:', result);
-    console.log('=== End processing ===');
-    
     return result;
   });
-  
-  console.log('ALL FINAL NAV ITEMS:', navItems);
   
   const navbarProps = {
     position: config.position,
@@ -152,7 +141,7 @@ function initializeNavbar(element: ShmoobiumElement) {
     itemClassName: 'navbar-item',
     iconClassName: 'navbar-icon',
     onItemClick: (item: any) => {
-      console.log('Navbar item clicked:', item.label);
+      
     }
   };
   
@@ -188,10 +177,10 @@ function initializeStickerContainer(element: ShmoobiumElement) {
     enableSounds: config.enableSounds,
     className: 'sticker-box',
     onStickerToggle: (stickerId: string, enabled: boolean) => {
-      console.log(`Sticker ${stickerId} ${enabled ? 'enabled' : 'disabled'}`);
+      
     },
     onStickerMove: (stickerId: string, position: any) => {
-      console.log(`Sticker ${stickerId} moved to:`, position);
+      
     }
   };
   
@@ -200,15 +189,11 @@ function initializeStickerContainer(element: ShmoobiumElement) {
   const stickerBoxElement = React.createElement(StickerBox, {
     ...stickerBoxProps,
     ref: (ref: any) => {
-      console.log('StickerBox ref set:', ref);
       stickerBoxInstance = ref;
       
       (window as any).openStickerBox = function() {
-        console.log('Opening sticker box...');
         if (stickerBoxInstance && typeof stickerBoxInstance.openPopup === 'function') {
           stickerBoxInstance.openPopup();
-        } else {
-          console.error('StickerBox instance or openPopup method not found!');
         }
       };
     }
@@ -223,34 +208,41 @@ export function initializeShmoobiumComponents() {
   const components = document.querySelectorAll('[data-shmoobium]');
   
   components.forEach(element => {
-    const componentType = element.getAttribute('data-shmoobium') as ComponentType;
-    const htmlElement = element as ShmoobiumElement;
-    
-    switch (componentType) {
-      case 'navbar':
-        initializeNavbar(htmlElement);
-        break;
-      case 'sticker-container':
-        initializeStickerContainer(htmlElement);
-        break;
-    }
+    initSingle(element);
   });
   
   const navbarContainer = document.getElementById('navbar');
   if (navbarContainer) {
     const navbarSrc = navbarContainer.getAttribute('data-navbar-src');
-    if (navbarSrc) {
+    if (navbarSrc && !(navbarContainer as ShmoobiumElement)._shmoobiumInitialized) {
+      (navbarContainer as ShmoobiumElement)._shmoobiumInitialized = true;
       loadNavbar(navbarSrc, '#navbar').catch(error => {
         console.error('Failed to auto-load navbar:', error);
+        (navbarContainer as ShmoobiumElement)._shmoobiumInitialized = false;
       });
     }
+  }
+}
+
+export function initSingle(element: Element) {
+  const componentType = element.getAttribute('data-shmoobium') as ComponentType;
+  const htmlElement = element as ShmoobiumElement;
+  
+  switch (componentType) {
+    case 'navbar':
+      initializeNavbar(htmlElement);
+      break;
+    case 'sticker-container':
+      initializeStickerContainer(htmlElement);
+      break;
   }
 }
 
 if (typeof window !== 'undefined') {
   window.Shmoobium = {
     init: initializeShmoobiumComponents,
-    loadNavbar: loadNavbar
+    loadNavbar: loadNavbar,
+    initSingle: initSingle
   };
   
   if (document.readyState === 'loading') {
