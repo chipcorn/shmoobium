@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Navbar, createIcon } from '../components/Navbar/Navbar';
-import { StickerBox } from '../components/StickerBox';
 import { loadNavbar } from './navbar-loader';
 
 interface ComponentConfig {
@@ -12,7 +11,7 @@ interface ShmoobiumElement extends HTMLElement {
   _shmoobiumInitialized?: boolean;
 }
 
-type ComponentType = 'navbar' | 'sticker-container';
+type ComponentType = 'navbar';
 
 const defaultConfigs: Record<ComponentType, ComponentConfig> = {
   navbar: {
@@ -27,12 +26,6 @@ const defaultConfigs: Record<ComponentType, ComponentConfig> = {
     displayShmoobiumVersion: false,
     iconSrc: 'https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp',
     iconAlt: 'Logo'
-  },
-  'sticker-container': {
-    maxStickers: 15,
-    enableSounds: true,
-    spawnRadius: 150,
-    stickerBoxOnMobile: true
   }
 };
 
@@ -153,57 +146,6 @@ function initializeNavbar(element: ShmoobiumElement) {
   element._shmoobiumInitialized = true;
 }
 
-let stickerBoxInstance: any = null;
-
-function initializeStickerContainer(element: ShmoobiumElement) {
-  if (element._shmoobiumInitialized) return;
-  
-  const config = parseDataAttributes(element, 'sticker-container');
-  
-  const stickers = Array.from(element.querySelectorAll('[data-sticker]')).map((img, index) => {
-    const imgElement = img as HTMLImageElement;
-    return {
-      id: (index + 1).toString(),
-      name: imgElement.alt || `Sticker ${index + 1}`,
-      image: imgElement.src,
-      enabled: imgElement.dataset.enabled === 'true' || false
-    };
-  });
-  
-  const stickerBoxProps = {
-    stickers: stickers,
-    maxStickers: config.maxStickers,
-    spawnRadius: config.spawnRadius,
-    enableSounds: config.enableSounds,
-    className: 'sticker-box',
-    onStickerToggle: (stickerId: string, enabled: boolean) => {
-      
-    },
-    onStickerMove: (stickerId: string, position: any) => {
-      
-    }
-  };
-  
-  element.innerHTML = '';
-  
-  const stickerBoxElement = React.createElement(StickerBox, {
-    ...stickerBoxProps,
-    ref: (ref: any) => {
-      stickerBoxInstance = ref;
-      
-      (window as any).openStickerBox = function() {
-        if (stickerBoxInstance && typeof stickerBoxInstance.openPopup === 'function') {
-          stickerBoxInstance.openPopup();
-        }
-      };
-    }
-  });
-  
-  ReactDOM.render(stickerBoxElement, element);
-  
-  element._shmoobiumInitialized = true;
-}
-
 export function initializeShmoobiumComponents() {
   const components = document.querySelectorAll('[data-shmoobium]');
   
@@ -231,9 +173,6 @@ export function initSingle(element: Element) {
   switch (componentType) {
     case 'navbar':
       initializeNavbar(htmlElement);
-      break;
-    case 'sticker-container':
-      initializeStickerContainer(htmlElement);
       break;
   }
 }
