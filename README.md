@@ -90,7 +90,7 @@ a component library for shmooblesworld
 **All Navbar Options:**
 - `data-position="top"` - Where to place the navbar (top, bottom, left, right)
 - `data-style="default"` - Style variant (default, floating, clear)
-- `data-slideover="default"` - Mobile menu style (default, bubble)
+- `data-slideover="default"` - Mobile menu style (default)
 - `data-alignment="right"` - Where to align nav items (top, bottom, left, right)
 - `data-logo-text="My Website"` - Text next to logo
 - `data-logo-href="index.html"` - Link when clicking logo

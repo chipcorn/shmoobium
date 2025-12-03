@@ -238,6 +238,32 @@ export const Navbar: React.FC<NavbarProps> = ({
     }
   };
 
+  const getTextShadowStyle = (bgColor: string): React.CSSProperties => {
+    // Convert hex to rgba for shadow
+    let hex = bgColor.replace('#', '');
+    // Handle 3-digit hex codes
+    if (hex.length === 3) {
+      hex = hex.split('').map(char => char + char).join('');
+    }
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    return { textShadow: `0 2px 6px rgba(${r}, ${g}, ${b}, 0.5), 0 1px 3px rgba(${r}, ${g}, ${b}, 0.3)` };
+  };
+
+  const getShadowColorRgba = (bgColor: string): string => {
+    // Convert hex to rgba for box-shadow
+    let hex = bgColor.replace('#', '');
+    // Handle 3-digit hex codes
+    if (hex.length === 3) {
+      hex = hex.split('').map(char => char + char).join('');
+    }
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    return `rgba(${r}, ${g}, ${b}, 0.3)`;
+  };
+
   const renderIcon = () => {
     let iconElement;
     
@@ -255,10 +281,15 @@ export const Navbar: React.FC<NavbarProps> = ({
       iconElement = <img src="https://unpkg.com/shmoobium@latest/dist/assets/shmoobium.webp" alt="Shmoobium" />;
     }
 
+    const logoTextStyles: React.CSSProperties = {};
+    if (backgroundColor && style === 'clear') {
+      Object.assign(logoTextStyles, getTextShadowStyle(backgroundColor));
+    }
+
     const logoContent = (
       <>
         {iconElement}
-        {logoText && <span className="navbar__logo-text">{logoText}</span>}
+        {logoText && <span className="navbar__logo-text" style={logoTextStyles}>{logoText}</span>}
       </>
     );
 
@@ -296,8 +327,17 @@ export const Navbar: React.FC<NavbarProps> = ({
   const renderDropdown = (items: NavbarItem[], parentIndex: number) => {
     if (openDropdown !== parentIndex) return null;
 
+    const dropdownStyles: React.CSSProperties = {};
+    if (backgroundColor && style !== 'clear') {
+      dropdownStyles.backgroundColor = backgroundColor;
+    }
+    if (backgroundColor && style === 'clear') {
+      const shadowRgba = getShadowColorRgba(backgroundColor);
+      dropdownStyles.boxShadow = `0 2px 8px ${shadowRgba}`;
+    }
+
     return (
-      <div className="navbar__dropdown">
+      <div className="navbar__dropdown" style={dropdownStyles}>
         {items.map((item, index) => {
           const ItemComponent = item.href ? 'a' : 'button';
           const itemProps = item.href 
@@ -374,8 +414,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onClick={(e) => handleDropdownToggle(index, e)}
                   type="button"
                 >
-                  {item.icon && <span className="navbar__item-icon">{item.icon}</span>}
-                  <span className="navbar__item-label">{item.label}</span>
+                  {item.icon && <span className="navbar__item-icon" style={style === 'clear' && backgroundColor ? getTextShadowStyle(backgroundColor) : {}}>{item.icon}</span>}
+                  <span className="navbar__item-label" style={style === 'clear' && backgroundColor ? getTextShadowStyle(backgroundColor) : {}}>{item.label}</span>
                   <span className="navbar__dropdown-arrow">▼</span>
                 </button>
                 {renderDropdown(item.dropdown!, index)}
@@ -409,13 +449,27 @@ export const Navbar: React.FC<NavbarProps> = ({
     );
   };
 
+  const getShadowColor = (bgColor: string): string => {
+    // Convert hex to rgba for shadow
+    let hex = bgColor.replace('#', '');
+    // Handle 3-digit hex codes
+    if (hex.length === 3) {
+      hex = hex.split('').map(char => char + char).join('');
+    }
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    return `0 2px 6px rgba(${r}, ${g}, ${b}, 0.5), 0 1px 3px rgba(${r}, ${g}, ${b}, 0.3)`;
+  };
+
   const customStyles: React.CSSProperties = {
     ...(font && { fontFamily: font }),
     ...(fontColor && { color: fontColor }),
     ...(backgroundColor && style === 'clear' ? {} : { backgroundColor: backgroundColor }),
-    ...(backgroundColor && style === 'clear' && { 
-      filter: `drop-shadow(0 0 8px ${backgroundColor}) drop-shadow(0 0 16px ${backgroundColor})` 
-    }),
+    ...(backgroundColor && style === 'clear' && {
+      '--navbar-shadow-color': getShadowColor(backgroundColor),
+      '--navbar-shadow-color-rgba': getShadowColorRgba(backgroundColor)
+    } as React.CSSProperties),
   };
 
   const toggleMobileMenu = () => {
@@ -520,13 +574,15 @@ export const Navbar: React.FC<NavbarProps> = ({
         isOpen={mobileMenuOpen && isMobile}
         onClose={closeMobileMenu}
         items={items}
-        slideover={slideover}
+        slideover="default"
         position={getEffectivePosition()}
         mobileDropdownOpen={mobileDropdownOpen}
         setMobileDropdownOpen={setMobileDropdownOpen}
         isItemActive={isItemActive}
         customStyles={customStyles}
         style={style}
+        backgroundColor={backgroundColor}
+        getTextShadowStyle={getTextShadowStyle}
       />
       
       {renderVersionDisplay()}
@@ -545,7 +601,9 @@ const MobileMenuPortal: React.FC<{
   isItemActive: (item: NavbarItem) => boolean;
   customStyles: React.CSSProperties;
   style: string;
-}> = ({ isOpen, onClose, items, slideover, position, mobileDropdownOpen, setMobileDropdownOpen, isItemActive, customStyles, style }) => {
+  backgroundColor?: string;
+  getTextShadowStyle: (bgColor: string) => React.CSSProperties;
+}> = ({ isOpen, onClose, items, slideover, position, mobileDropdownOpen, setMobileDropdownOpen, isItemActive, customStyles, style, backgroundColor, getTextShadowStyle }) => {
   const menuRef = React.useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = React.useState(false);
   const [shouldRender, setShouldRender] = React.useState(false);
@@ -627,7 +685,7 @@ const MobileMenuPortal: React.FC<{
 
   if (!shouldRender) return null;
 
-  const menuClass = slideover === 'bubble' ? 'navbar__mobile-menu--bubble' : 'navbar__mobile-menu--default';
+  const menuClass = 'navbar__mobile-menu--default';
   
   let slideoverPosition = position;
   if (position === 'left') {
@@ -675,8 +733,8 @@ const MobileMenuPortal: React.FC<{
                   onClick={() => setMobileDropdownOpen(isDropdownOpen ? null : index)}
                   type="button"
                 >
-                  {item.icon && <span className="navbar__item-icon">{item.icon}</span>}
-                  <span className="navbar__item-label">{item.label}</span>
+                  {item.icon && <span className="navbar__item-icon" style={style === 'clear' && backgroundColor ? getTextShadowStyle(backgroundColor) : {}}>{item.icon}</span>}
+                  <span className="navbar__item-label" style={style === 'clear' && backgroundColor ? getTextShadowStyle(backgroundColor) : {}}>{item.label}</span>
                   <span className={cn('navbar__dropdown-arrow', isDropdownOpen && 'navbar__dropdown-arrow--open')}>▼</span>
                 </button>
                 {isDropdownOpen && (

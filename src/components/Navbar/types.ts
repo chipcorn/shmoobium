@@ -19,7 +19,7 @@ export interface NavbarIcon {
 export type NavbarPosition = 'top' | 'bottom' | 'left' | 'right';
 export type NavbarStyle = 'default' | 'floating' | 'clear';
 export type NavbarAlignment = 'top' | 'bottom' | 'left' | 'right';
-export type SlideoverStyle = 'default' | 'bubble';
+export type SlideoverStyle = 'default';
 
 export interface NavbarProps {
   items: NavbarItem[];
