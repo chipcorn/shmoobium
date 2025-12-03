@@ -84,10 +84,10 @@ export const Navbar: React.FC<NavbarProps> = ({
     const effectivePosition = isMobile && (safePosition === 'left' || safePosition === 'right') ? 'top' : safePosition;
     
     const bodyClassMap = {
-      'top': style === 'floating' ? 'navbar-floating-top' : 'navbar-top',
-      'bottom': style === 'floating' ? 'navbar-floating-bottom' : 'navbar-bottom',
-      'left': style === 'floating' ? 'navbar-floating-left' : 'navbar-left',
-      'right': style === 'floating' ? 'navbar-floating-right' : 'navbar-right',
+      'top': style === 'floating' ? 'navbar-floating-top' : style === 'clear' ? 'navbar-clear-top' : 'navbar-top',
+      'bottom': style === 'floating' ? 'navbar-floating-bottom' : style === 'clear' ? 'navbar-clear-bottom' : 'navbar-bottom',
+      'left': style === 'floating' ? 'navbar-floating-left' : style === 'clear' ? 'navbar-clear-left' : 'navbar-left',
+      'right': style === 'floating' ? 'navbar-floating-right' : style === 'clear' ? 'navbar-clear-right' : 'navbar-right',
     };
 
     const bodyClass = bodyClassMap[effectivePosition];
@@ -412,7 +412,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   const customStyles: React.CSSProperties = {
     ...(font && { fontFamily: font }),
     ...(fontColor && { color: fontColor }),
-    ...(backgroundColor && { backgroundColor: backgroundColor }),
+    ...(backgroundColor && style === 'clear' ? {} : { backgroundColor: backgroundColor }),
+    ...(backgroundColor && style === 'clear' && { 
+      filter: `drop-shadow(0 0 8px ${backgroundColor}) drop-shadow(0 0 16px ${backgroundColor})` 
+    }),
   };
 
   const toggleMobileMenu = () => {
@@ -523,6 +526,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         setMobileDropdownOpen={setMobileDropdownOpen}
         isItemActive={isItemActive}
         customStyles={customStyles}
+        style={style}
       />
       
       {renderVersionDisplay()}
@@ -540,7 +544,8 @@ const MobileMenuPortal: React.FC<{
   setMobileDropdownOpen: (index: number | null) => void;
   isItemActive: (item: NavbarItem) => boolean;
   customStyles: React.CSSProperties;
-}> = ({ isOpen, onClose, items, slideover, position, mobileDropdownOpen, setMobileDropdownOpen, isItemActive, customStyles }) => {
+  style: string;
+}> = ({ isOpen, onClose, items, slideover, position, mobileDropdownOpen, setMobileDropdownOpen, isItemActive, customStyles, style }) => {
   const menuRef = React.useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = React.useState(false);
   const [shouldRender, setShouldRender] = React.useState(false);
@@ -637,6 +642,10 @@ const MobileMenuPortal: React.FC<{
     width: `${menuWidth}px !important`,
     minWidth: `${menuWidth}px !important`,
     maxWidth: `${menuWidth}px !important`,
+    ...(style === 'clear' && customStyles.backgroundColor ? {
+      background: 'transparent !important',
+      filter: `drop-shadow(0 0 8px ${customStyles.backgroundColor}) drop-shadow(0 0 16px ${customStyles.backgroundColor})`
+    } : {}),
   };
 
   const menuContent = (

@@ -11,7 +11,7 @@ a component library for shmooblesworld
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Shmoobium Website</title>
+    <title>Hellooo shmoobium</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/shmoobium@1/dist/index.umd.js"></script>
@@ -70,7 +70,7 @@ a component library for shmooblesworld
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Shmoobium Website</title>
+    <title>Hellooo shmoobium</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/shmoobium@2/dist/index.umd.js"></script>
@@ -89,7 +89,7 @@ a component library for shmooblesworld
 
 **All Navbar Options:**
 - `data-position="top"` - Where to place the navbar (top, bottom, left, right)
-- `data-style="default"` - Style variant (default, floating)
+- `data-style="default"` - Style variant (default, floating, clear)
 - `data-slideover="default"` - Mobile menu style (default, bubble)
 - `data-alignment="right"` - Where to align nav items (top, bottom, left, right)
 - `data-logo-text="My Website"` - Text next to logo
