@@ -206,9 +206,18 @@ body.navbar-clear-right {
   align-items: center;
   gap: 12px;
   position: absolute;
-  top: 10px;
+  top: 16px;
   left: 20px;
   z-index: 2;
+}
+
+.navbar--goober .navbar__icon img,
+.navbar--goober .navbar__icon-button img,
+.navbar--goober .navbar__icon-link img {
+  width: 60px !important;
+  height: 60px !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
 .navbar--goober .navbar__items {
