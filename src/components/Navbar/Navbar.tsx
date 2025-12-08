@@ -106,6 +106,21 @@ export const Navbar: React.FC<NavbarProps> = ({
       }
     });
 
+    if (style === 'goober' && backgroundColor) {
+      const getBackgroundColorRgba = (bgColor: string, opacity: number): string => {
+        let hex = bgColor.replace('#', '');
+        if (hex.length === 3) {
+          hex = hex.split('').map(char => char + char).join('');
+        }
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+      };
+      document.body.style.setProperty('--navbar-goober-shadow-top', getBackgroundColorRgba(backgroundColor, 0.95));
+      document.body.style.setProperty('--navbar-goober-shadow-mid', getBackgroundColorRgba(backgroundColor, 0.6));
+    }
+
     setCurrentUrl(window.location.href);
 
     const handleResize = () => {
@@ -149,11 +164,15 @@ export const Navbar: React.FC<NavbarProps> = ({
 
     return () => {
       document.body.classList.remove(bodyClass);
+      if (style === 'goober') {
+        document.body.style.removeProperty('--navbar-goober-shadow-top');
+        document.body.style.removeProperty('--navbar-goober-shadow-mid');
+      }
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('scroll', handleScroll);
     };
-  }, [safePosition, style, checkIfItemsFit, isMobile]);
+  }, [safePosition, style, checkIfItemsFit, isMobile, backgroundColor]);
 
   useEffect(() => {
     if (mobileMenuOpen && isMobile) {
@@ -461,28 +480,13 @@ export const Navbar: React.FC<NavbarProps> = ({
     return `0 2px 6px rgba(${r}, ${g}, ${b}, 0.5), 0 1px 3px rgba(${r}, ${g}, ${b}, 0.3)`;
   };
 
-  const getBackgroundColorRgba = (bgColor: string, opacity: number): string => {
-    let hex = bgColor.replace('#', '');
-    if (hex.length === 3) {
-      hex = hex.split('').map(char => char + char).join('');
-    }
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-  };
-
   const customStyles: React.CSSProperties = {
     ...(font && { fontFamily: font }),
     ...(fontColor && { color: fontColor }),
-    ...(backgroundColor && style === 'clear' ? {} : { backgroundColor: backgroundColor }),
+    ...(backgroundColor && style === 'clear' ? {} : style === 'goober' ? {} : { backgroundColor: backgroundColor }),
     ...(backgroundColor && style === 'clear' && {
       '--navbar-shadow-color': getShadowColor(backgroundColor),
       '--navbar-shadow-color-rgba': getShadowColorRgba(backgroundColor)
-    } as React.CSSProperties),
-    ...(backgroundColor && style === 'goober' && {
-      '--navbar-goober-shadow-top': getBackgroundColorRgba(backgroundColor, 0.95),
-      '--navbar-goober-shadow-mid': getBackgroundColorRgba(backgroundColor, 0.6),
     } as React.CSSProperties),
   };
 

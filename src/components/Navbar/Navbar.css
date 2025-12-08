@@ -311,8 +311,8 @@ body.navbar-goober-top::before {
   right: 0;
   height: 150px;
   background: linear-gradient(to bottom, var(--navbar-goober-shadow-top, rgba(20, 20, 20, 0.95)) 0%, var(--navbar-goober-shadow-mid, rgba(20, 20, 20, 0.6)) 50%, transparent 100%);
-  pointer-events: none;
-  z-index: 1999;
+  pointer-events: none !important;
+  z-index: 0;
 }
 
 body.navbar-goober-bottom {
@@ -327,8 +327,8 @@ body.navbar-goober-bottom::before {
   right: 0;
   height: 150px;
   background: linear-gradient(to top, var(--navbar-goober-shadow-top, rgba(20, 20, 20, 0.95)) 0%, var(--navbar-goober-shadow-mid, rgba(20, 20, 20, 0.6)) 50%, transparent 100%);
-  pointer-events: none;
-  z-index: 1999;
+  pointer-events: none !important;
+  z-index: 0;
 }
 
 body.navbar-goober-left {
