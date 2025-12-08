@@ -281,6 +281,16 @@ body.navbar-clear-right {
   position: absolute;
 }
 
+.navbar--goober .navbar__dropdown .navbar__item-icon {
+  font-size: 20px !important;
+  min-width: 20px !important;
+}
+
+.navbar--goober .navbar__dropdown .navbar__item-icon img {
+  width: 20px !important;
+  height: 20px !important;
+}
+
 .navbar--goober.navbar--top .navbar__item,
 .navbar--goober.navbar--bottom .navbar__item {
   min-width: 0 !important;
@@ -293,6 +303,20 @@ body.navbar-clear-right {
 .navbar--goober .navbar__mobile-toggle--visible {
   z-index: 2001;
   display: flex !important;
+}
+
+.navbar--goober.navbar--mobile .navbar__container {
+  height: auto;
+  min-height: auto;
+  padding: 16px 20px;
+}
+
+.navbar--goober.navbar--mobile .navbar__icon,
+.navbar--goober.navbar--mobile .navbar__icon-button,
+.navbar--goober.navbar--mobile .navbar__icon-link {
+  position: relative;
+  top: auto;
+  left: auto;
 }
 
 @media (max-width: 768px) {
