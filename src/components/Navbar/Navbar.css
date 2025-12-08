@@ -242,6 +242,12 @@ body.navbar-clear-right {
 .navbar--goober .navbar__item-icon img {
   width: 85px !important;
   height: 85px !important;
+  transition: transform 0.2s ease;
+  transform-origin: center;
+}
+
+.navbar--goober .navbar__item:hover .navbar__item-icon img {
+  transform: scale(1.08);
 }
 
 .navbar--goober .navbar__item-label {
@@ -312,7 +318,7 @@ body.navbar-goober-top::before {
   height: 150px;
   background: linear-gradient(to bottom, var(--navbar-goober-shadow-top, rgba(20, 20, 20, 0.95)) 0%, var(--navbar-goober-shadow-mid, rgba(20, 20, 20, 0.6)) 50%, transparent 100%);
   pointer-events: none !important;
-  z-index: 0;
+  z-index: 1999;
 }
 
 body.navbar-goober-bottom {
@@ -328,7 +334,7 @@ body.navbar-goober-bottom::before {
   height: 150px;
   background: linear-gradient(to top, var(--navbar-goober-shadow-top, rgba(20, 20, 20, 0.95)) 0%, var(--navbar-goober-shadow-mid, rgba(20, 20, 20, 0.6)) 50%, transparent 100%);
   pointer-events: none !important;
-  z-index: 0;
+  z-index: 1999;
 }
 
 body.navbar-goober-left {
