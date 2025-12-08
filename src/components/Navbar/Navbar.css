@@ -194,7 +194,7 @@ body.navbar-clear-right {
   justify-content: flex-start;
   height: 130px;
   min-height: 130px;
-  padding: 10px 20px;
+  padding: 0 20px;
   position: relative;
   z-index: 1;
 }
