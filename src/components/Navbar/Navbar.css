@@ -282,13 +282,13 @@ body.navbar-clear-right {
 }
 
 .navbar--goober .navbar__dropdown .navbar__item-icon {
-  font-size: 20px !important;
-  min-width: 20px !important;
+  font-size: 28px !important;
+  min-width: 28px !important;
 }
 
 .navbar--goober .navbar__dropdown .navbar__item-icon img {
-  width: 20px !important;
-  height: 20px !important;
+  width: 28px !important;
+  height: 28px !important;
 }
 
 .navbar--goober.navbar--top .navbar__item,
