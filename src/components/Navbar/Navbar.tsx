@@ -84,10 +84,10 @@ export const Navbar: React.FC<NavbarProps> = ({
     const effectivePosition = isMobile && (safePosition === 'left' || safePosition === 'right') ? 'top' : safePosition;
     
     const bodyClassMap = {
-      'top': style === 'floating' ? 'navbar-floating-top' : style === 'clear' ? 'navbar-clear-top' : 'navbar-top',
-      'bottom': style === 'floating' ? 'navbar-floating-bottom' : style === 'clear' ? 'navbar-clear-bottom' : 'navbar-bottom',
-      'left': style === 'floating' ? 'navbar-floating-left' : style === 'clear' ? 'navbar-clear-left' : 'navbar-left',
-      'right': style === 'floating' ? 'navbar-floating-right' : style === 'clear' ? 'navbar-clear-right' : 'navbar-right',
+      'top': style === 'floating' ? 'navbar-floating-top' : style === 'clear' ? 'navbar-clear-top' : style === 'goober' ? 'navbar-goober-top' : 'navbar-top',
+      'bottom': style === 'floating' ? 'navbar-floating-bottom' : style === 'clear' ? 'navbar-clear-bottom' : style === 'goober' ? 'navbar-goober-bottom' : 'navbar-bottom',
+      'left': style === 'floating' ? 'navbar-floating-left' : style === 'clear' ? 'navbar-clear-left' : style === 'goober' ? 'navbar-goober-left' : 'navbar-left',
+      'right': style === 'floating' ? 'navbar-floating-right' : style === 'clear' ? 'navbar-clear-right' : style === 'goober' ? 'navbar-goober-right' : 'navbar-right',
     };
 
     const bodyClass = bodyClassMap[effectivePosition];
@@ -415,8 +415,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   type="button"
                 >
                   {item.icon && <span className="navbar__item-icon" style={style === 'clear' && backgroundColor ? getTextShadowStyle(backgroundColor) : {}}>{item.icon}</span>}
-                  <span className="navbar__item-label" style={style === 'clear' && backgroundColor ? getTextShadowStyle(backgroundColor) : {}}>{item.label}</span>
-                  <span className="navbar__dropdown-arrow">▼</span>
+                  <span className="navbar__item-label" style={style === 'clear' && backgroundColor ? getTextShadowStyle(backgroundColor) : {}}>{item.label} ▼</span>
                 </button>
                 {renderDropdown(item.dropdown!, index)}
               </div>
