@@ -1,4 +1,4 @@
-# Shmoobium v2.2.0
+# Shmoobium
 
 a component library for shmooblesworld
 

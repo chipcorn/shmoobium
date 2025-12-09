@@ -317,7 +317,7 @@ body.navbar-clear-right {
 .navbar--goober.navbar--mobile .navbar__container {
   height: auto;
   min-height: auto;
-  padding: 16px 20px;
+  padding: 10px 14px;
 }
 
 .navbar--goober.navbar--mobile .navbar__icon,
@@ -326,6 +326,14 @@ body.navbar-clear-right {
   position: relative;
   top: auto;
   left: auto;
+  gap: 8px;
+}
+
+.navbar--goober.navbar--mobile .navbar__icon img,
+.navbar--goober.navbar--mobile .navbar__icon-button img,
+.navbar--goober.navbar--mobile .navbar__icon-link img {
+  width: 74px !important;
+  height: 74px !important;
 }
 
 @media (max-width: 768px) {
@@ -369,6 +377,15 @@ body.navbar-goober-bottom::before {
   pointer-events: none !important;
   z-index: 1999;
 }
+
+@media (max-width: 768px) {
+  body.navbar-goober-top::before,
+  body.navbar-goober-bottom::before {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
 
 body.navbar-goober-left {
   padding-left: 240px;
@@ -1218,6 +1235,11 @@ body.mobile-menu-open {
 
 
 .mobile-menu-open.navbar-goober-top::before {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.mobile-menu-open.navbar-goober-bottom::before {
   opacity: 0;
   visibility: hidden;
 }
