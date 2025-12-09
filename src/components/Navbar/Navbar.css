@@ -1215,3 +1215,26 @@ body.mobile-menu-open {
     white-space: nowrap !important;
   }
 }
+
+
+.mobile-menu-open.navbar-goober-top::before {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.mobile-menu-open .navbar--goober .navbar__icon,
+.mobile-menu-open .navbar--goober .navbar__icon-button,
+.mobile-menu-open .navbar--goober .navbar__icon-link {
+  gap: 8px;
+}
+
+.mobile-menu-open .navbar--goober .navbar__icon img,
+.mobile-menu-open .navbar--goober .navbar__icon-button img,
+.mobile-menu-open .navbar--goober .navbar__icon-link img {
+  width: 74px !important;
+  height: 74px !important;
+}
+
+.mobile-menu-open .navbar--goober.navbar--mobile .navbar__container {
+  padding: 10px 14px;
+}
