@@ -356,10 +356,14 @@ body.navbar-goober-top::before {
   top: 0;
   left: 0;
   right: 0;
-  height: 150px;
-  background: linear-gradient(to bottom, var(--navbar-goober-shadow-top, rgba(20, 20, 20, 0.95)) 0%, var(--navbar-goober-shadow-mid, rgba(20, 20, 20, 0.6)) 50%, transparent 100%);
+  height: 200px;
+  background: linear-gradient(to bottom, var(--navbar-goober-shadow-top, rgba(20, 20, 20, 0.95)) 0%, var(--navbar-goober-shadow-mid, rgba(20, 20, 20, 0.6)) 60%, transparent 100%);
   pointer-events: none !important;
   z-index: 1999;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.45) 55%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.45) 55%, rgba(0, 0, 0, 0) 100%);
 }
 
 body.navbar-goober-bottom {
