@@ -350,6 +350,30 @@ body.navbar-goober-top {
   padding-top: 162px;
 }
 
+.navbar-progressive-blur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 200px;
+  z-index: 1997;
+  pointer-events: none;
+  background: transparent;
+  will-change: backdrop-filter;
+  transform: translateZ(0);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.2) 80%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.2) 80%, rgba(0,0,0,0) 100%);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .navbar-progressive-blur {
+    background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, transparent 100%);
+  }
+}
+
 body.navbar-goober-top::before {
   content: '';
   position: fixed;
@@ -357,13 +381,19 @@ body.navbar-goober-top::before {
   left: 0;
   right: 0;
   height: 200px;
-  background: linear-gradient(to bottom, var(--navbar-goober-shadow-top, rgba(20, 20, 20, 0.95)) 0%, var(--navbar-goober-shadow-mid, rgba(20, 20, 20, 0.6)) 60%, transparent 100%);
+  background: linear-gradient(
+    to bottom,
+    var(--navbar-goober-shadow-top, rgba(20, 20, 20, 0.5)) 0%,
+    var(--navbar-goober-shadow-mid, rgba(20, 20, 20, 0.3)) 50%,
+    transparent 100%
+  );
   pointer-events: none !important;
+  z-index: 1998;
+}
+
+body.navbar-goober-top::after {
+  content: none;
   z-index: 1999;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.45) 55%, rgba(0, 0, 0, 0) 100%);
-  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.45) 55%, rgba(0, 0, 0, 0) 100%);
 }
 
 body.navbar-goober-bottom {

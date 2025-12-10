@@ -564,8 +564,17 @@ export const Navbar: React.FC<NavbarProps> = ({
     return createPortal(versionContent, document.body);
   };
 
+  const renderProgressiveBlur = () => {
+    if (style !== 'goober' || getEffectivePosition() !== 'top') return null;
+    return createPortal(
+      <div className="navbar-progressive-blur" />,
+      document.body
+    );
+  };
+
   return (
     <>
+      {renderProgressiveBlur()}
       <nav 
         ref={navbarRef}
         className={cn(
