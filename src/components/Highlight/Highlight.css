@@ -1,0 +1,43 @@
+.shmoobium-highlight-container {
+  display: inline;
+}
+
+.shmoobium-highlight-marker,
+.shmoobium-highlight-brush,
+.shmoobium-highlight-solid {
+  display: inline-block;
+  position: relative;
+  color: inherit;
+  padding: 0 0.1em;
+  isolation: isolate;
+}
+
+.shmoobium-highlight-marker::before {
+  content: '';
+  position: absolute;
+  inset: 0.2em -0.15em;
+  z-index: -1;
+  background: var(--shmoobium-highlight-color);
+  border-radius: 2px 4px 3px 2px / 3px 2px 4px 2px;
+  transform: skewX(-12deg) rotate(-0.6deg);
+  filter: url(#shmoobium-hl-wobbly);
+}
+
+.shmoobium-highlight-brush::before {
+  content: '';
+  position: absolute;
+  inset: 0.2em -0.15em;
+  z-index: -1;
+  background: var(--shmoobium-highlight-color);
+  border-radius: 35% 65% 60% 40% / 55% 35% 65% 45%;
+  filter: url(#shmoobium-hl-brush);
+}
+
+.shmoobium-highlight-solid::before {
+  content: '';
+  position: absolute;
+  inset: 0.2em -0.12em;
+  z-index: -1;
+  background: var(--shmoobium-highlight-color);
+  border-radius: 2px;
+}
